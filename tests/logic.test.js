@@ -1,0 +1,99 @@
+/* Huddle logic tests:  node tests/logic.test.js */
+'use strict';
+var assert = require('assert'), path = require('path');
+var store = {};
+global.localStorage = { getItem: function (k) { return store[k] || null; }, setItem: function (k, v) { store[k] = String(v); } };
+global.document = { addEventListener: function () {}, querySelector: function () { return null; }, hidden: false };
+try { global.navigator = {}; } catch (e) { /* Node 21+ has its own */ }
+global.window = global;
+['data', 'i18n', 'core', 'games/words', 'games/act', 'games/spin'].forEach(function (f) { require(path.join(__dirname, '..', 'js', f + '.js')); });
+var H = window.Huddle, S = H.S, n = 0;
+function test(name, fn) { fn(); n++; console.log('ok  ' + name); }
+
+test('ten players split evenly into 2, 3 and 4 random teams', function () {
+  'ABCDEFGHIJ'.split('').forEach(function (c) { H.addPlayer('P' + c); });
+  [2, 3, 4].forEach(function (k) {
+    H.setTeamCount(k);
+    var sizes = H.teamLists().map(function (l) { return l.length; });
+    assert.strictEqual(sizes.length, k);
+    assert.ok(Math.max.apply(0, sizes) - Math.min.apply(0, sizes) <= 1, sizes.join(','));
+  });
+});
+test('choose myself: a tap moves a player to the next team and wraps round', function () {
+  S.teams.mode = 'manual'; H.setTeamCount(3);
+  var p = S.players[0], t0 = H.teamOf(p.id);
+  H.moveToNextTeam(p.id); assert.strictEqual(H.teamOf(p.id), (t0 + 1) % 3);
+  H.moveToNextTeam(p.id); H.moveToNextTeam(p.id); assert.strictEqual(H.teamOf(p.id), t0);
+});
+test('fewer teams keeps manual choices and moves only those left over', function () {
+  S.teams.mode = 'manual'; H.setTeamCount(4);
+  S.players.forEach(function (p, i) { S.teams.of[p.id] = i % 4; });
+  H.setTeamCount(2);
+  assert.ok(S.players.every(function (p) { return H.teamOf(p.id) < 2; }));
+  assert.strictEqual(H.teamOf(S.players[1].id), 1);
+});
+test('new players in manual mode join the smallest team', function () {
+  var p = H.addPlayer('Late'); var lists = H.teamLists();
+  assert.ok(lists[H.teamOf(p.id)].length <= Math.min.apply(0, lists.map(function (l) { return l.length; })) + 1);
+});
+test('turns rotate team by team, and players inside each team', function () {
+  S.teams.mode = 'random'; H.setTeamCount(2); H.resetTurns(false);
+  var a = H.turn(), b = H.turn(), c = H.turn();
+  assert.deepStrictEqual([a.team, b.team, c.team], [0, 1, 0]);
+  assert.notStrictEqual(a.player.id, c.player.id);
+});
+test('a deck uses every card once before any repeat', function () {
+  var d = H.deck([1, 2, 3, 4, 5]), seen = [];
+  for (var i = 0; i < 5; i++) seen.push(d.next());
+  assert.deepStrictEqual(seen.slice().sort(), [1, 2, 3, 4, 5]);
+});
+test('kids mode keeps only kid-friendly words', function () {
+  S.kids = true;
+  assert.ok(H.pool().length > 20 && H.pool().every(function (x) { return x.kid; }));
+  assert.ok(H.list('CHALLENGES').every(function (x) { return x.kid; }));
+  S.kids = false;
+});
+test('Kannada packs come on with the Kannada interface; songs stay in Hum', function () {
+  S.lang = 'en'; assert.ok(!H.pool().some(function (x) { return x.pack === 'knbible'; }));
+  S.lang = 'kn'; assert.ok(H.pool().some(function (x) { return x.pack === 'knbible'; }));
+  assert.ok(!H.pool().some(function (x) { return x.pack === 'hum'; }));
+  assert.ok(H.pool({ songs: true }).every(function (x) { return x.pack === 'hum'; }));
+  S.lang = 'en';
+});
+test('every pack switched off still leaves words to play', function () {
+  H.allPacks().forEach(function (p) { S.packsOn[p.id] = false; });
+  assert.ok(H.pool().length > 0); S.packsOn = {};
+});
+test('points add to the night and save', function () {
+  H.resetScore(); H.addPoints(1, 3, 'x'); H.addPoints(1, -1, 'x');
+  assert.strictEqual(S.score.pts[1], 2);
+  assert.strictEqual(JSON.parse(store['huddle.v1']).score.pts[1], 2);
+});
+test('saved data from an older or broken copy still loads', function () {
+  store['huddle.v1'] = '{"teams":{"count":9},"score":{}}';
+  var s = H.__test.load(); assert.strictEqual(s.teams.count, 4); assert.strictEqual(s.score.pts.length, 4);
+  store['huddle.v1'] = 'not json'; assert.strictEqual(H.__test.load().theme, 'arcade');
+});
+test('wheel: the slice under the pointer for any angle', function () {
+  assert.strictEqual(H.wheelSegAt(0, 6), 0);
+  assert.strictEqual(H.wheelSegAt(-61, 6), 1);   // turned 61° anticlockwise: slice 1 is at the top
+  assert.strictEqual(H.wheelSegAt(61, 6), 4);    // turned 61° clockwise: slice 5 (index 4)
+  assert.strictEqual(H.wheelSegAt(-361, 6), 0);
+  assert.strictEqual(H.wheelSegAt(3600 + 30.5, 6), 5);
+});
+test('tilt: upright 0, screen to the floor -1, to the ceiling +1', function () {
+  function u(b, g) { return H.screenUp({ beta: b, gamma: g }); }
+  assert.ok(Math.abs(u(90, 0)) < 1e-9);          // portrait upright
+  assert.ok(Math.abs(u(0, 90)) < 1e-9);          // landscape upright on the forehead
+  assert.ok(u(180, 0) < -0.99 && u(0, 0) > 0.99);
+  assert.ok(u(0, 150) < -0.5 && u(0, 40) > 0.5);  // landscape nod down / tilt back
+});
+test('every Fill the Verse answer is part of its KJV text', function () {
+  H.D.VERSES.forEach(function (v) { assert.ok(v.word && v.ref && v.before, v.ref); });
+  H.D.ODDS.forEach(function (o) { assert.ok(o.words.indexOf(o.odd) >= 0, o.odd); });
+});
+test('every interface text has a Kannada version', function () {
+  var I = window.HuddleI18n, miss = Object.keys(I.en).filter(function (k) { return !I.kn[k] && k !== 'wordsEg'; });
+  assert.deepStrictEqual(miss, []);
+});
+console.log('\n' + n + ' tests passed');
