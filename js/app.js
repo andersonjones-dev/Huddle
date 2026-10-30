@@ -7,7 +7,15 @@
   'use strict';
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$, $$ = H.$$, svg = H.svg;
   var ORDER = ['act', 'forbid', 'one', 'draw', 'hum', 'potato', 'likely', 'spin', 'verse', 'odd'];
-  var THEMES = [['arcade', 'Arcade Night', 'linear-gradient(135deg,#2b2ce0,#ff2bd6)', '#0d0b24'], ['comic', 'Comic Splash', 'linear-gradient(135deg,#ffd400 50%,#ff2e2e 50%)', '#fff7c7'], ['graffiti', 'Graffiti', 'linear-gradient(135deg,#ff2a6d,#d1f700,#05d9e8)', '#d9d6cf']];
+  // [id, name, swatch, light theme-color, dark theme-color (looks that follow the phone's dark mode)]
+  var THEMES = [['playful', 'Illustrated & Playful', 'linear-gradient(135deg,#DDF1FF 50%,#FFC93C 50%)', '#DDF1FF', '#1A1838'],
+    ['popart', 'Pop Art Comic', 'radial-gradient(circle,#111 1.5px,transparent 2px) 0 0/6px 6px,linear-gradient(135deg,#FFE45E 50%,#E8222E 50%)', '#FFE45E', '#1A1A1A'],
+    ['arcade', 'Arcade Night', 'linear-gradient(135deg,#2b2ce0,#ff2bd6)', '#0d0b24'],
+    ['graffiti', 'Graffiti', 'linear-gradient(135deg,#ff2a6d,#d1f700,#05d9e8)', '#d9d6cf']];
+  var SFX = { act: 'SHH!', forbid: 'BZZT!', one: 'ONE!', draw: 'SKRITCH!', hum: 'HMMM!', potato: 'BOOM!', likely: 'YOU!', spin: 'WHIRR!', verse: 'AMEN!', odd: 'HUH?' };
+  // Preview only: ?look=<id>&mode=light|dark shows a look without saving it.
+  var QS = new URLSearchParams(location.search), LOOK = QS.get('look'), MODE = QS.get('mode');
+  var darkMQ = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
   var QR_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
   var filter = 'all', route = 'hub';
   function games() { return ORDER.map(function (id) { return H.games[id]; }).filter(Boolean); }
@@ -16,16 +24,24 @@
   var lastColor = '';
   function applyLook() {
     var app = $('#app');
-    if (!THEMES.some(function (x) { return x[0] === S.theme; })) S.theme = 'arcade';
-    app.dataset.theme = S.theme;
+    if (!THEMES.some(function (x) { return x[0] === S.theme; })) S.theme = 'playful';
+    var look = THEMES.some(function (x) { return x[0] === LOOK; }) ? LOOK : S.theme;
+    app.dataset.theme = look;
+    if (MODE === 'light' || MODE === 'dark') app.dataset.mode = MODE;
+    var set = H.iconSet();   // swap icons already on screen to this look's set
+    $$('use').forEach(function (u) { var h = u.getAttribute('href') || ''; if (/^#[ip]-/.test(h) && h.charAt(1) !== set) u.setAttribute('href', '#' + set + h.slice(2)); });
     document.documentElement.lang = S.lang === 'kn' ? 'kn' : 'en';
-    var c = THEMES.filter(function (x) { return x[0] === S.theme; })[0][3];
+    var th = THEMES.filter(function (x) { return x[0] === look; })[0];
+    var dark = MODE ? MODE === 'dark' : !!(darkMQ && darkMQ.matches);
+    var c = (dark && th[4]) || th[3];
     if (c !== lastColor) {   // write theme-color only when it actually changes
       lastColor = c;
       var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', c);
       document.body.style.background = c;
     }
   }
+
+  if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener('change', applyLook);
 
   /* ---------- the game picker ---------- */
   H.route('hub', function (view) {
@@ -39,11 +55,11 @@
       '<button class="ib lang" type="button" id="lang" aria-label="' + esc(t('language')) + '">' + (S.lang === 'kn' ? 'EN' : 'ಕ') + '</button>' +
       '<button class="ib" type="button" data-go="players" aria-label="' + esc(t('playersTeams')) + '">' + svg('users') + '</button>' +
       '<button class="ib" type="button" data-go="settings" aria-label="' + esc(t('settings')) + '">' + svg('gear') + '</button></div>' +
-      '<div><h2 class="h">' + esc(t('pickGame')) + '</h2><p class="sub"><button class="link" type="button" data-go="players" style="padding:2px 0">' + esc(who) + '</button> · <button class="link" type="button" data-go="packs" style="padding:2px 0">' + esc(packSummary()) + '</button>' + (S.kids ? ' · ' + esc(t('kids')) : '') + '</p></div>' +
+      '<div class="hello"><span class="mascot" aria-hidden="true"></span><h2 class="h">' + esc(t('pickGame')) + '</h2><p class="sub"><button class="link" type="button" data-go="players" style="padding:2px 0">' + esc(who) + '</button> · <button class="link" type="button" data-go="packs" style="padding:2px 0">' + esc(packSummary()) + '</button>' + (S.kids ? ' · ' + esc(t('kids')) : '') + '</p></div>' +
       '<button class="night" type="button" data-go="night"><span class="ic">' + svg('night', 26) + '</span><span class="grow"><b>' + esc(t('partyNight')) + '</b><small>' + esc(S.night ? t('nightOn') : t('partyNightSub')) + '</small></span>' + svg('back', 20).replace('class="i"', 'class="i" style="transform:rotate(180deg)"') + '</button>' +
       '<div class="chips" role="group" aria-label="' + esc(t('games')) + '">' + kinds.map(function (k) { return '<button class="chip" type="button" data-filter="' + k[0] + '" aria-pressed="' + (filter === k[0]) + '">' + esc(k[1]) + '</button>'; }).join('') + '</div>' +
       '<div class="grid">' + list.map(function (g) {
-        return '<button class="gc" type="button" data-go="game:' + g.id + '"><span class="tag">' + esc(t(g.tag)) + '</span><span class="ic">' + svg(g.id, 26) + '</span><b>' + esc(H.gname(g)) + '</b><small>' + esc(H.gdesc(g)) + '</small></button>';
+        return '<button class="gc" type="button" data-sfx="' + (SFX[g.id] || '') + '" data-go="game:' + g.id + '"><span class="tag">' + esc(t(g.tag)) + '</span><span class="ic">' + svg(g.id, 26) + '</span><b>' + esc(H.gname(g)) + '</b><small>' + esc(H.gdesc(g)) + '</small></button>';
       }).join('') + '</div>' +
       '<div class="row"><button class="btn alt" type="button" data-go="score">' + svg('trophy') + esc(t('score')) + '</button><button class="btn alt" type="button" data-go="packs">' + svg('pack') + esc(t('packs')) + '</button></div>' +
       '<div class="foot">' + (window.AppAbout ? AppAbout.linkHTML() : '') + '</div>';

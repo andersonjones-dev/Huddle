@@ -14,7 +14,7 @@
   /* ---------------- saved state ---------------- */
   function fresh() {
     return {
-      v: 1, lang: 'en', theme: 'arcade', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
+      v: 1, lang: 'en', theme: 'playful', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
       players: [], teams: { count: 2, mode: 'random', names: TEAM_NAMES.slice(), of: {} },
       packsOn: {}, custom: [],
       night: null,          // { plan: [gameIds], i: 0 }
@@ -27,6 +27,7 @@
     var f = fresh();
     if (!s || typeof s !== 'object') return f;
     Object.keys(f).forEach(function (k) { if (s[k] === undefined) s[k] = f[k]; });
+    if (s.theme === 'comic') s.theme = 'popart';   // Comic Splash was replaced by Pop Art Comic
     if (!Array.isArray(s.players)) s.players = [];
     if (!s.teams || typeof s.teams !== 'object') s.teams = f.teams;
     s.teams.count = Math.max(2, Math.min(4, s.teams.count | 0 || 2));
@@ -47,7 +48,9 @@
   function uid() { return Math.random().toString(36).slice(2, 9); }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-  function svg(id, size) { return '<svg class="i" width="' + (size || 22) + '" height="' + (size || 22) + '" aria-hidden="true"><use href="#i-' + id + '"/></svg>'; }
+  // Illustrated & Playful has its own chunky icon set (#p-…); the other looks use #i-…
+  function iconSet() { var a = document.getElementById('app'); return a && a.dataset.theme === 'playful' ? 'p' : 'i'; }
+  function svg(id, size) { return '<svg class="i" width="' + (size || 22) + '" height="' + (size || 22) + '" aria-hidden="true"><use href="#' + iconSet() + '-' + id + '"/></svg>'; }
 
   /* A deck draws without repeats until everything has been used once. */
   function deck(items) {
@@ -303,6 +306,6 @@
     endButtons: endButtons, confetti: confetti, TEAM_COLORS: TEAM_COLORS,
     gname: function (g) { return S.lang === 'kn' && I.gamesKn[g.id] ? I.gamesKn[g.id][0] : g.name; },
     gdesc: function (g) { return S.lang === 'kn' && I.gamesKn[g.id] ? I.gamesKn[g.id][1] : g.desc; },
-    __test: { fresh: fresh, load: load }
+    iconSet: iconSet, __test: { fresh: fresh, load: load }
   };
 })();

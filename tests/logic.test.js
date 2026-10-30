@@ -72,7 +72,8 @@ test('points add to the night and save', function () {
 test('saved data from an older or broken copy still loads', function () {
   store['huddle.v1'] = '{"teams":{"count":9},"score":{}}';
   var s = H.__test.load(); assert.strictEqual(s.teams.count, 4); assert.strictEqual(s.score.pts.length, 4);
-  store['huddle.v1'] = 'not json'; assert.strictEqual(H.__test.load().theme, 'arcade');
+  store['huddle.v1'] = 'not json'; assert.strictEqual(H.__test.load().theme, 'playful');
+  store['huddle.v1'] = '{"theme":"comic"}'; assert.strictEqual(H.__test.load().theme, 'popart');   // Comic Splash moved to Pop Art
 });
 test('wheel: the slice under the pointer for any angle', function () {
   assert.strictEqual(H.wheelSegAt(0, 6), 0);
