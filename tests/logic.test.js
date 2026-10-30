@@ -193,4 +193,19 @@ test('play counts and bomb timer have safe defaults', function () {
   S.fuse = 'nonsense'; assert.deepStrictEqual(H.fuseRange(), [15000, 45000]);
   S.fuse = 'medium';
 });
+test('Individual play: every player is their own side, scored separately from teams', function () {
+  H.resetScore(); H.setPlay('teams'); H.addPoints(0, 3, 'x');
+  H.setPlay('solo');
+  assert.strictEqual(H.sideCount(), S.players.length);
+  assert.strictEqual(H.teamName(2), S.players[2].name);
+  assert.strictEqual(H.pointsOf(0), 0);                 // team points don't leak into players
+  H.addPoints(2, 5, 'x'); assert.strictEqual(H.pointsOf(2), 5);
+  assert.strictEqual(H.teamOf(S.players[2].id), 2);
+  assert.strictEqual(H.teamsReady(), '');
+  H.setPlay('teams'); assert.strictEqual(H.pointsOf(0), 3);  // and back again
+  H.resetScore();
+});
+test('timers pause while the scoreboard is open', function () {
+  H.pauseAll(); assert.ok(H.isPaused()); H.resumeAll(); assert.ok(!H.isPaused());
+});
 console.log('\n' + n + ' tests passed');

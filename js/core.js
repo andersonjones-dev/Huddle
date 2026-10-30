@@ -14,11 +14,11 @@
   /* ---------------- saved state ---------------- */
   function fresh() {
     return {
-      v: 1, lang: 'en', theme: 'playful', appear: 'light', mode: 'bible', times: {}, counts: {}, fuse: 'medium', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
+      v: 1, lang: 'en', theme: 'playful', appear: 'light', mode: 'bible', times: {}, counts: {}, fuse: 'medium', play: 'teams', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
       players: [], teams: { count: 2, mode: 'random', names: TEAM_NAMES.slice(), of: {} },
       packsOn: {}, custom: [],
       night: null,          // { plan: [gameIds], i: 0 }
-      score: { pts: [0, 0, 0, 0], log: [] }
+      score: { pts: [0, 0, 0, 0], solo: {}, log: [] }
     };
   }
   function load() {
@@ -35,6 +35,8 @@
     if (!s.teams.of || typeof s.teams.of !== 'object') s.teams.of = {};
     if (!s.score || !Array.isArray(s.score.pts)) s.score = f.score;
     while (s.score.pts.length < 4) s.score.pts.push(0);
+    if (!s.score.solo || typeof s.score.solo !== 'object') s.score.solo = {};
+    if (s.play !== 'solo') s.play = 'teams';
     if (!Array.isArray(s.custom)) s.custom = [];
     if (!s.times || typeof s.times !== 'object') s.times = {};
     if (!s.counts || typeof s.counts !== 'object') s.counts = {};
@@ -96,36 +98,48 @@
     order.forEach(function (id, i) { S.teams.of[id] = i % S.teams.count; });
     save();
   }
-  function teamOf(pid) { var v = S.teams.of[pid]; return (v == null || v >= S.teams.count) ? 0 : v; }
+  /* Teams or Individual (S.play). Everything else talks about "sides":
+     in Teams a side is a team; in Individual every player is their own side. */
+  function solo() { return S.play === 'solo'; }
+  function sideCount() { return solo() ? S.players.length : S.teams.count; }
+  function rawTeamOf(pid) { var v = S.teams.of[pid]; return (v == null || v >= S.teams.count) ? 0 : v; }
+  function teamOf(pid) { if (solo()) { for (var i = 0; i < S.players.length; i++) if (S.players[i].id === pid) return i; return 0; } return rawTeamOf(pid); }
   function teamLists() {
+    if (solo()) return S.players.map(function (p) { return [p]; });
     var lists = []; for (var i = 0; i < S.teams.count; i++) lists.push([]);
-    S.players.forEach(function (p) { lists[teamOf(p.id)].push(p); });
+    S.players.forEach(function (p) { lists[rawTeamOf(p.id)].push(p); });
     return lists;
   }
-  function moveToNextTeam(pid) { S.teams.of[pid] = (teamOf(pid) + 1) % S.teams.count; save(); }
+  function moveToNextTeam(pid) { S.teams.of[pid] = (rawTeamOf(pid) + 1) % S.teams.count; save(); }
   function setTeamCount(n) {
     S.teams.count = Math.max(2, Math.min(4, n));
     if (S.teams.mode === 'random') randomTeams();
-    else S.players.forEach(function (p) { if (teamOf(p.id) >= S.teams.count) S.teams.of[p.id] = smallestTeam(); });
+    else S.players.forEach(function (p) { if (rawTeamOf(p.id) >= S.teams.count) S.teams.of[p.id] = smallestTeam(); });
     save();
   }
-  function teamName(i) { return S.teams.names[i] || TEAM_NAMES[i]; }
-  function teamColor(i) { return TEAM_COLORS[i % TEAM_COLORS.length]; }
+  function teamName(i) { if (solo()) return (S.players[i] || {}).name || '?'; return S.teams.names[i] || TEAM_NAMES[i]; }
+  function teamColor(i) { if (solo()) return (S.players[i] || {}).color || COLORS[i % COLORS.length]; return TEAM_COLORS[i % TEAM_COLORS.length]; }
   function teamsReady() {
     if (S.players.length < 2) return t('needPlayers');
+    if (solo()) return '';
     var l = teamLists();
     if (l.some(function (x) { return x.length < 1; })) return t('needTeams');
     return '';
   }
+  function setPlay(m) { S.play = m === 'solo' ? 'solo' : 'teams'; save(); }
 
-  /* ---------------- scoring for the night ---------------- */
-  function addPoints(team, n, game) {
-    S.score.pts[team] = (S.score.pts[team] || 0) + n;
-    S.score.log.push({ g: game, team: team, n: n, at: Date.now() });
+  /* ---------------- scoring for the night ----------------
+     Team points are kept by team number, individual points by player, so
+     switching between Teams and Individual never mixes them up. */
+  function addPoints(side, n, game) {
+    if (solo()) { var p = S.players[side]; if (!p) return; S.score.solo[p.id] = (S.score.solo[p.id] || 0) + n; }
+    else S.score.pts[side] = (S.score.pts[side] || 0) + n;
+    S.score.log.push({ g: game, team: side, n: n, solo: solo(), at: Date.now() });
     if (S.score.log.length > 400) S.score.log.shift();
     save();
   }
-  function resetScore() { S.score = { pts: [0, 0, 0, 0], log: [] }; save(); }
+  function pointsOf(side) { if (solo()) { var p = S.players[side]; return p ? (S.score.solo[p.id] || 0) : 0; } return S.score.pts[side] || 0; }
+  function resetScore() { S.score = { pts: [0, 0, 0, 0], solo: {}, log: [] }; save(); }
 
   /* ---------------- word pools ----------------
      Content side (S.mode): 'bible' = Christian content only, 'everyday' = no Bible or church content.
@@ -215,23 +229,32 @@
   var timers = [];
   function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
   function every(fn, ms) { var id = setInterval(fn, ms); timers.push(id); return id; }
-  function stopTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; }
+  function stopTimers() { timers.forEach(function (id) { clearTimeout(id); clearInterval(id); }); timers = []; running = []; pausedNow = false; }
   // countdown(sec, onTick(left), onEnd)
+  // Timers pause while the scoreboard panel is open during a game.
+  var running = [], pausedNow = false;
+  function isPaused() { return pausedNow; }
+  function pauseAll() { pausedNow = true; running.forEach(function (c) { c.pause(); }); }
+  function resumeAll() { pausedNow = false; running.forEach(function (c) { c.resume(); }); }
   function countdown(sec, onTick, onEnd) {
-    var end = Date.now() + sec * 1000, last = -1, paused = false, leftAtPause = 0;
+    var end = Date.now() + sec * 1000, last = -1, paused = false, leftAtPause = 0, self;
     var id = every(function () {
       if (paused) return;
       var left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
       if (left !== last) { last = left; onTick(left); if (left <= 5 && left > 0) sfx('beep'); }
-      if (left === 0) { clearInterval(id); sfx('end'); haptic([60, 40, 140]); onEnd(); }
+      if (left === 0) { clearInterval(id); drop(); sfx('end'); haptic([60, 40, 140]); onEnd(); }
     }, 200);
+    function drop() { running = running.filter(function (c) { return c !== self; }); }
     onTick(sec);
-    return {
-      stop: function () { clearInterval(id); },
+    self = {
+      stop: function () { clearInterval(id); drop(); },
       pause: function () { if (!paused) { paused = true; leftAtPause = end - Date.now(); } },
       resume: function () { if (paused) { paused = false; end = Date.now() + leftAtPause; } },
       add: function (s) { end += s * 1000; }
     };
+    running.push(self);
+    if (pausedNow) self.pause();
+    return self;
   }
 
 
@@ -359,7 +382,8 @@
     S: S, save: save, D: D, esc: esc, t: t, shuffle: shuffle, uid: uid, $: $, $$: $$, svg: svg, deck: deck,
     addPlayer: addPlayer, removePlayer: removePlayer, randomTeams: randomTeams, teamOf: teamOf, teamLists: teamLists,
     moveToNextTeam: moveToNextTeam, setTeamCount: setTeamCount, teamName: teamName, teamColor: teamColor, teamsReady: teamsReady,
-    addPoints: addPoints, resetScore: resetScore,
+    addPoints: addPoints, pointsOf: pointsOf, resetScore: resetScore, solo: solo, sideCount: sideCount, setPlay: setPlay,
+    isPaused: isPaused, pauseAll: pauseAll, resumeAll: resumeAll,
     allPacks: allPacks, packOn: packOn, pool: pool, wordLang: wordLang, list: list,
     sfx: sfx, audioOn: audioOn, haptic: haptic, wake: wake, later: later, every: every, countdown: countdown, stopTimers: stopTimers,
     toast: toast, onLeave: onLeave, fmt: fmt, roundTime: roundTime, playCount: playCount, fuseRange: fuseRange, pickerHTML: pickerHTML, bindPicker: bindPicker, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,

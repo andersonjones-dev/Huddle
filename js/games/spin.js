@@ -12,9 +12,10 @@
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$;
   var WCOLS = ['#ff2e63', '#7c4dff', '#00b894', '#ff7a1a', '#1f6bff', '#e6007e', '#c9a400', '#00a8e8'];
 
-  function wheelHTML(labels, a) {
+  // colourOf: slice index -> colour (a player keeps one colour on all their slices)
+  function wheelHTML(labels, a, colourOf) {
     var n = labels.length, seg = 360 / n;
-    var cols = labels.map(function (l, i) { var c = WCOLS[i % WCOLS.length]; if (i === n - 1 && n % WCOLS.length === 1 && n > 1) c = WCOLS[3]; return c; });
+    var cols = labels.map(function (l, i) { if (colourOf) return colourOf(i); var c = WCOLS[i % WCOLS.length]; if (i === n - 1 && n % WCOLS.length === 1 && n > 1) c = WCOLS[3]; return c; });
     var grad = 'conic-gradient(' + labels.map(function (l, i) { return cols[i] + ' ' + (i * seg) + 'deg ' + ((i + 1) * seg) + 'deg'; }).join(',') + ')';
     var pegs = '', lbls = '';
     for (var i = 0; i < n; i++) {
@@ -37,16 +38,20 @@
       var g = H.games.spin;
       if (S.players.length < 2) { H.needSetup(view, g, t('needPlayers')); return; }
       var deck = H.deck(H.list('CHALLENGES')), ch = null;
-      // at least 6 slices so the wheel feels like a wheel; names repeat round it
-      var slices = H.shuffle(S.players.slice());
-      while (slices.length < 6) slices = slices.concat(H.shuffle(S.players.slice()));
-      slices = slices.slice(0, Math.max(6, Math.min(16, S.players.length)));
+      // One slice per player. With 2 or 3 players each gets 2 slices (4 or 6), spaced apart: A B C A B C.
+      var order = H.shuffle(S.players.slice()), slices = order.slice();
+      if (order.length <= 3) slices = order.concat(order);
       var W = { a: Math.random() * 360, v: 0, raf: 0, last: 0, n: slices.length, seg: 360 / slices.length, lastSeg: null, drag: null };
       var spinning = false, spins = 0, limit = H.playCount('spin');
       H.onLeave(function () { cancelAnimationFrame(W.raf); });
 
       view.innerHTML = H.bar(H.gname(g), t('flickSub')) +
-        wheelHTML(slices.map(function (p) { return p.name; }), W.a) +
+        wheelHTML(slices.map(function (p) { return p.name; }), W.a, function (i) {
+          var k = order.indexOf(slices[i]), c = WCOLS[k % WCOLS.length];
+          // never let the last slice match the first (they touch at the top)
+          if (i === slices.length - 1 && slices.length > 1 && c === WCOLS[order.indexOf(slices[0]) % WCOLS.length]) c = WCOLS[(k + 3) % WCOLS.length];
+          return c;
+        }) +
         '<p class="hint" id="whint">' + esc(t('flickHint')) + '</p>' +
         '<div class="card spinres" id="sres"><div class="sub" id="swho">' + esc(t('whoWillItBe')) + '</div><div class="who" id="sname"></div><div style="font-weight:800" id="sch"></div></div>' +
         '<div class="row" id="after" hidden><button class="btn alt" type="button" id="skip">' + esc(t('skip')) + '</button><button class="btn b4" type="button" id="did">' + H.svg('check') + esc(t('didIt')) + '</button></div>' +

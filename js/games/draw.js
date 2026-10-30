@@ -21,7 +21,7 @@
         cur = deck.next(cur);
         var drew = false, ink = INKS[0], size = 6, strokes = [], live = null, cd = null, T = H.roundTime('draw');
         H.wake(true);
-        view.innerHTML = H.bar(H.gname(g), tr.team >= 0 ? H.teamName(tr.team) + (tr.player ? ' · ' + tr.player.name : '') : '') +
+        view.innerHTML = H.bar(H.gname(g), tr.team >= 0 ? H.turnLabel(tr) : '') +
           '<div class="meta"><span class="timer" id="tm">' + H.fmt(T) + '</span><button class="btn b2 sm peek" type="button" id="peek">' + esc(t('holdToPeek')) + '</button></div>' +
           '<div class="bar"><i id="tb" style="width:100%"></i></div>' +
           '<canvas class="pad" id="pad" aria-label="' + esc(t('drawHere')) + '"></canvas>' +

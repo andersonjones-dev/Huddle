@@ -5,7 +5,7 @@
  * raise VERSION below (e.g. 1.0.0 -> 1.0.1). That tells phones a
  * new version exists; the app then offers an "Update" button.
  */
-var VERSION = '1.0.3';
+var VERSION = '1.1.0';
 var CACHE = 'huddle-' + VERSION;
 var LIB = 'huddle-lib';     // fonts and the QR code library; kept across versions
 
@@ -16,6 +16,7 @@ var APP_FILES = [
   './js/data.js',
   './js/i18n.js',
   './js/core.js',
+  './js/buzz.js',
   './js/games/words.js',
   './js/games/act.js',
   './js/games/draw.js',

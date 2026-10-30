@@ -84,6 +84,17 @@
     appearance: 'Appearance', appearanceSub: 'Light or dark, for Illustrated & Playful', light: 'Light', dark: 'Dark', matchPhone: 'Match phone',
     sideBible: 'Bible', sideEveryday: 'Everyday', sideLabel: 'Content', sideBibleOn: 'Bible content on', sideEverydayOn: 'Everyday content on: no Bible or church words', sideNote: 'Switch to Everyday on the main screen for the other packs', sideNoteB: 'Switch to Bible on the main screen for the other packs',
     howMany: 'How many to play', unlimited: 'No limit', bombTimer: 'Bomb timer', fuse_short: 'Short', fuse_medium: 'Medium', fuse_long: 'Long', fuse_random: 'Surprise', custom: 'Custom', min: 'min',
+    oneTeamOnly: 'One Word is a team game. Switch to Teams in Players & teams.', wordN: 'Word', clueGivers: 'Clue-givers, come and look', onlyGiversLook: 'Only the clue-givers look at the screen',
+    showWord: 'Show the word', cluesOnly: 'Clue-givers only', secretWord: 'The secret word', hideStart: 'Hide it and start', clueN: 'Clue {n}', worth: 'worth {n}',
+    teamTurn: 'Turn: {team}', sayOneWord: '{name}, say ONE word', teamGuesses: '{team}, you have one guess', teamGotIt: '{team} got it', passTo: 'Wrong guess · pass to {team}',
+    nobodyWord: 'Nobody can get it · skip this word', theWordWas: 'The word was', wonWord: '{team} win it: +{n} after {c} clue(s)', nobodyGot: 'Nobody got this one', nextWord: 'Next word',
+    howToPlay: 'How to play', teamsSub: 'Teams score together', soloSub: 'Everyone plays for themselves', individual: 'Individual', individualLc: 'individual',
+    backToGame: 'Back to the game', pausedNote: 'The game is paused while you look.',
+    phoneBuzzers: 'Phone buzzers', shoutIt: 'Shout it out', useFirstbuzz: 'Buzz on phones (Firstbuzz)', onBuzzers: 'on buzzers', openBuzzers: 'Open buzzers', getReady: 'Get ready…',
+    buzzersOpen: 'Buzzers open! Waiting for the first buzz…', nobodyBuzzed: 'Nobody buzzed · show answer', buzzedFirst: 'Buzzed first', thenLine: 'Then:', wrongAns: 'Wrong', rightAns: 'Correct',
+    pointTo: 'Point to', whoIs: 'Who is {name}?', connecting: 'Setting up buzzers…', needNet: 'Phone buzzers need internet. Play by shouting for now.', scanToJoin: 'Scan to join',
+    orOpen: 'or open', sameNames: 'Use the same names as in Huddle so points go to the right team.', startQuiz: 'Start the quiz', noBuzzers: 'Play without buzzers',
+    waitingJoin: 'Waiting for people to join…', joinMsg: 'Join the Huddle quiz on Firstbuzz with code', oddQ: 'Which is the odd one out?',
     surprise: 'Surprise order', startNight: 'Start the night', nightNote: 'Points from every game add up on one scoreboard.', finalResults: 'Final results'
   };
   var KN2 = {
@@ -124,6 +135,17 @@
     appearance: 'ನೋಟದ ಬಣ್ಣ', appearanceSub: 'ಬೆಳಕು ಅಥವಾ ಕತ್ತಲು (ಚಿತ್ರಮಯ ನೋಟಕ್ಕೆ)', light: 'ಬೆಳಕು', dark: 'ಕತ್ತಲು', matchPhone: 'ಫೋನಿನಂತೆ',
     sideBible: 'ಬೈಬಲ್', sideEveryday: 'ದಿನನಿತ್ಯ', sideLabel: 'ವಿಷಯ', sideBibleOn: 'ಬೈಬಲ್ ವಿಷಯ ಆನ್', sideEverydayOn: 'ದಿನನಿತ್ಯ ವಿಷಯ ಆನ್: ಬೈಬಲ್ ಅಥವಾ ಸಭೆಯ ಪದಗಳಿಲ್ಲ', sideNote: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ದಿನನಿತ್ಯ ಆರಿಸಿ', sideNoteB: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ಬೈಬಲ್ ಆರಿಸಿ',
     howMany: 'ಎಷ್ಟು ಆಡಬೇಕು', unlimited: 'ಮಿತಿಯಿಲ್ಲ', bombTimer: 'ಬಾಂಬ್ ಸಮಯ', fuse_short: 'ಕಡಿಮೆ', fuse_medium: 'ಮಧ್ಯಮ', fuse_long: 'ದೀರ್ಘ', fuse_random: 'ಅಚ್ಚರಿ', custom: 'ಬೇಕಾದಷ್ಟು', min: 'ನಿಮಿಷ',
+    oneTeamOnly: 'ಒಂದೇ ಪದ ತಂಡದ ಆಟ. ಆಟಗಾರರು ಮತ್ತು ತಂಡಗಳಲ್ಲಿ ತಂಡಗಳನ್ನು ಆರಿಸಿ.', wordN: 'ಪದ', clueGivers: 'ಸುಳಿವು ಕೊಡುವವರು ಬಂದು ನೋಡಿ', onlyGiversLook: 'ಸುಳಿವು ಕೊಡುವವರು ಮಾತ್ರ ಪರದೆ ನೋಡಿ',
+    showWord: 'ಪದ ತೋರಿಸಿ', cluesOnly: 'ಸುಳಿವು ಕೊಡುವವರಿಗೆ ಮಾತ್ರ', secretWord: 'ರಹಸ್ಯ ಪದ', hideStart: 'ಮುಚ್ಚಿ ಆರಂಭಿಸಿ', clueN: 'ಸುಳಿವು {n}', worth: '{n} ಅಂಕ',
+    teamTurn: '{team} ಸರದಿ', sayOneWord: '{name}, ಒಂದೇ ಪದ ಹೇಳಿ', teamGuesses: '{team}, ನಿಮಗೆ ಒಂದು ಊಹೆ', teamGotIt: '{team} ಸರಿಯಾಗಿ ಹೇಳಿದರು', passTo: 'ತಪ್ಪು · {team} ಗೆ ಕೊಡಿ',
+    nobodyWord: 'ಯಾರಿಗೂ ಆಗುತ್ತಿಲ್ಲ · ಈ ಪದ ಬಿಡಿ', theWordWas: 'ಪದ ಇದು', wonWord: '{team} ಗೆದ್ದರು: {c} ಸುಳಿವಿನಲ್ಲಿ +{n}', nobodyGot: 'ಇದನ್ನು ಯಾರೂ ಹೇಳಲಿಲ್ಲ', nextWord: 'ಮುಂದಿನ ಪದ',
+    howToPlay: 'ಹೇಗೆ ಆಡುವುದು', teamsSub: 'ತಂಡವಾಗಿ ಅಂಕ', soloSub: 'ಪ್ರತಿಯೊಬ್ಬರೂ ತಮಗಾಗಿ', individual: 'ಒಬ್ಬೊಬ್ಬರಾಗಿ', individualLc: 'ಒಬ್ಬೊಬ್ಬರಾಗಿ',
+    backToGame: 'ಆಟಕ್ಕೆ ಹಿಂದಿರುಗಿ', pausedNote: 'ನೀವು ನೋಡುವಾಗ ಆಟ ನಿಂತಿರುತ್ತದೆ.',
+    phoneBuzzers: 'ಫೋನ್ ಬಜರ್', shoutIt: 'ಕೂಗಿ ಹೇಳಿ', useFirstbuzz: 'ಫೋನಿನಲ್ಲಿ ಬಜ್ (Firstbuzz)', onBuzzers: 'ಬಜರ್‌ನಲ್ಲಿ', openBuzzers: 'ಬಜರ್ ತೆರೆಯಿರಿ', getReady: 'ಸಿದ್ಧರಾಗಿ…',
+    buzzersOpen: 'ಬಜರ್ ತೆರೆದಿದೆ! ಮೊದಲ ಬಜ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ…', nobodyBuzzed: 'ಯಾರೂ ಬಜ್ ಮಾಡಲಿಲ್ಲ · ಉತ್ತರ ತೋರಿಸಿ', buzzedFirst: 'ಮೊದಲು ಬಜ್ ಮಾಡಿದವರು', thenLine: 'ನಂತರ:', wrongAns: 'ತಪ್ಪು', rightAns: 'ಸರಿ',
+    pointTo: 'ಅಂಕ', whoIs: '{name} ಯಾರು?', connecting: 'ಬಜರ್ ಸಿದ್ಧವಾಗುತ್ತಿದೆ…', needNet: 'ಫೋನ್ ಬಜರ್‌ಗೆ ಇಂಟರ್ನೆಟ್ ಬೇಕು. ಸದ್ಯಕ್ಕೆ ಕೂಗಿ ಆಡಿ.', scanToJoin: 'ಸೇರಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
+    orOpen: 'ಅಥವಾ ತೆರೆಯಿರಿ', sameNames: 'ಅಂಕ ಸರಿಯಾದ ತಂಡಕ್ಕೆ ಹೋಗಲು Huddle‌ನ ಅದೇ ಹೆಸರು ಬಳಸಿ.', startQuiz: 'ರಸಪ್ರಶ್ನೆ ಆರಂಭಿಸಿ', noBuzzers: 'ಬಜರ್ ಇಲ್ಲದೆ ಆಡಿ',
+    waitingJoin: 'ಜನ ಸೇರಲು ಕಾಯುತ್ತಿದೆ…', joinMsg: 'Firstbuzz ನಲ್ಲಿ Huddle ರಸಪ್ರಶ್ನೆಗೆ ಸೇರಿ, ಕೋಡ್', oddQ: 'ಇವುಗಳಲ್ಲಿ ಹೊಂದದ್ದು ಯಾವುದು?',
     surprise: 'ಅಚ್ಚರಿಯ ಕ್ರಮ', startNight: 'ರಾತ್ರಿ ಆರಂಭಿಸಿ', nightNote: 'ಎಲ್ಲಾ ಆಟಗಳ ಅಂಕಗಳು ಒಂದೇ ಅಂಕಪಟ್ಟಿಗೆ ಸೇರುತ್ತವೆ.', finalResults: 'ಅಂತಿಮ ಫಲಿತಾಂಶ'
   };
   Object.keys(EN2).forEach(function (k) { EN[k] = EN2[k]; });
@@ -132,7 +154,7 @@
   var GAMES_KN = {
     act: ['ಅಭಿನಯಿಸು', 'ಹಣೆಗೆ ಫೋನ್ ಇಡಿ. ಸರಿ ಆದರೆ ಕೆಳಗೆ, ಬಿಡಲು ಮೇಲೆ ಓರೆ ಮಾಡಿ.'],
     forbid: ['ನಿಷಿದ್ಧ ಪದಗಳು', 'ನಿಷೇಧಿತ ಪದಗಳನ್ನು ಹೇಳದೆ ವಿವರಿಸಿ.'],
-    one: ['ಒಂದೇ ಪದ', 'ಪ್ರತಿ ಸುಳಿವಿಗೆ ಒಂದೇ ಪದ.'],
+    one: ['ಒಂದೇ ಪದ', 'ತಂಡಗಳು ಸರದಿಯಲ್ಲಿ ಒಂದು ಪದದ ಸುಳಿವು ಕೊಡುತ್ತವೆ. ಒಂದೇ ತಂಡ ಗೆಲ್ಲುತ್ತದೆ.'],
     draw: ['ಚಿತ್ರ ಬಿಡಿಸು', 'ಸಮಯ ಮುಗಿಯುವ ಮೊದಲು ಪದವನ್ನು ಚಿತ್ರಿಸಿ.'],
     hum: ['ರಾಗ ಗುನುಗು', 'ಹಾಡನ್ನು ಗುನುಗಿ, ತಂಡ ಹೆಸರು ಹೇಳಲಿ.'],
     potato: ['ಬಿಸಿ ಬಾಂಬ್', 'ಒಂದು ಹೇಳಿ, ಮುಂದಕ್ಕೆ ಕೊಡಿ. ಸಿಡಿದಾಗ ನಿಮ್ಮ ಕೈಯಲ್ಲಿ ಇರಬಾರದು.'],

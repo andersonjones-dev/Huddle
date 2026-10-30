@@ -521,3 +521,14 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 .banned span{font-size:clamp(19px,5.4vw,24px);line-height:1.15;padding:9px 12px}
 @media (min-width:700px) and (min-height:600px){.banned span{font-size:28px;padding:11px 14px}}
 @media (max-height:700px){.banned span{font-size:19px;padding:6px 10px}}
+
+/* ---------- Phone buzzers (Firstbuzz) ---------- */
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:800;letter-spacing:.08em}
+.buzzbar{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.buzzlive{text-align:center;font:var(--fdw) 22px/1.2 var(--fd);letter-spacing:var(--fdls,0);padding:18px;border-radius:var(--r);border:var(--bw) dashed var(--line,var(--ink));animation:livepulse 1.2s ease-in-out infinite}
+@keyframes livepulse{50%{background:color-mix(in srgb,var(--a1) 22%,transparent)}}
+.buzzwin{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px;border-radius:var(--r);background:var(--bc);color:#fff;border:var(--bw) solid var(--line,var(--ink));box-shadow:var(--sh);text-align:center;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+.buzzwin small{font:800 12px var(--fb);letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.buzzwin b{font:var(--fdw) 34px/1.05 var(--fd);letter-spacing:var(--fdls,0);text-shadow:0 2px 0 rgba(0,0,0,.25);overflow-wrap:anywhere}
+.buzzwin span{font-weight:800}
+@media (prefers-reduced-motion:reduce){.buzzlive,.buzzwin{animation:none}}

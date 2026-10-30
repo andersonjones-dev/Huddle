@@ -50,7 +50,7 @@
     var kinds = [['all', t('all')], ['words', t('words')], ['party', t('party')], ['quick', t('quick')]];
     var list = games().filter(function (g) { return filter === 'all' || g.kind === filter; });
     var lists = H.teamLists(), np = S.players.length;
-    var who = np ? np + ' ' + t('playersLc') + ' · ' + S.teams.count + ' ' + t('teamsLc') : t('noPlayers');
+    var who = np ? np + ' ' + t('playersLc') + ' · ' + (H.solo() ? t('individualLc') : S.teams.count + ' ' + t('teamsLc')) : t('noPlayers');
     view.innerHTML =
       '<div class="top"><h1 class="logo">Hud<span>dle</span></h1><span class="grow"></span>' +
       '<button class="ib lang" type="button" id="lang" aria-label="' + esc(t('language')) + '">' + (S.lang === 'kn' ? 'EN' : 'ಕ') + '</button>' +
@@ -89,14 +89,16 @@
       view.innerHTML = H.bar(t('playersTeams'), t('playersSub')) +
         '<div class="card stack"><form class="field" id="add" autocomplete="off"><label class="sr-only" for="pn">' + esc(t('playerName')) + '</label><input class="inp" id="pn" maxlength="16" placeholder="' + esc(t('playerName')) + '" enterkeyhint="done"><button class="btn sm" type="submit">' + svg('plus') + esc(t('add')) + '</button></form>' +
         (S.players.length ? '<div class="pl">' + S.players.map(function (p) { return '<button class="pchip" type="button" data-rm="' + p.id + '" aria-label="' + esc(t('remove') + ' ' + p.name) + '"><i style="background:' + p.color + '">' + esc(p.name[0].toUpperCase()) + '</i><span>' + esc(p.name) + '</span><span class="x">×</span></button>'; }).join('') + '</div>' : '<p class="hint">' + esc(t('addSome')) + '</p>') + '</div>' +
-        '<div class="card stack"><div class="set"><span class="lbl"><b>' + esc(t('teamCount')) + '</b></span><span class="seg">' + [2, 3, 4].map(function (n) { return '<button type="button" data-tc="' + n + '" aria-pressed="' + (S.teams.count === n) + '">' + n + '</button>'; }).join('') + '</span></div>' +
+        '<div class="card stack"><div class="set"><span class="lbl"><b>' + esc(t('howToPlay')) + '</b><small>' + esc(H.solo() ? t('soloSub') : t('teamsSub')) + '</small></span><span class="seg">' +
+          [['teams', t('teams')], ['solo', t('individual')]].map(function (m) { return '<button type="button" data-play="' + m[0] + '" aria-pressed="' + ((H.solo() ? 'solo' : 'teams') === m[0]) + '">' + esc(m[1]) + '</button>'; }).join('') + '</span></div></div>' +
+        (H.solo() ? '' : '<div class="card stack"><div class="set"><span class="lbl"><b>' + esc(t('teamCount')) + '</b></span><span class="seg">' + [2, 3, 4].map(function (n) { return '<button type="button" data-tc="' + n + '" aria-pressed="' + (S.teams.count === n) + '">' + n + '</button>'; }).join('') + '</span></div>' +
         '<div class="set"><span class="lbl"><b>' + esc(t('howTeams')) + '</b></span></div>' +
         '<div class="row"><button class="chip" type="button" data-mode="random" aria-pressed="' + (S.teams.mode === 'random') + '" style="justify-content:center">' + svg('shuffle', 18) + esc(t('random')) + '</button><button class="chip" type="button" data-mode="manual" aria-pressed="' + (S.teams.mode === 'manual') + '" style="justify-content:center">' + svg('users', 18) + esc(t('manual')) + '</button></div>' +
-        (S.teams.mode === 'random' ? '<button class="btn b2" type="button" id="shuf">' + svg('shuffle') + esc(t('shuffle')) + '</button>' : '<p class="hint">' + esc(t('tapToMove')) + '</p>') + '</div>' +
-        lists.map(function (l, i) {
+        (S.teams.mode === 'random' ? '<button class="btn b2" type="button" id="shuf">' + svg('shuffle') + esc(t('shuffle')) + '</button>' : '<p class="hint">' + esc(t('tapToMove')) + '</p>') + '</div>') +
+        (H.solo() ? '' : lists.map(function (l, i) {
           return '<div class="team" style="--tc:' + H.teamColor(i) + '"><div class="tn"><label class="sr-only" for="tn' + i + '">' + esc(t('teamName')) + '</label><input id="tn' + i + '" data-tn="' + i + '" value="' + esc(H.teamName(i)) + '" maxlength="18"><span class="count">' + l.length + '</span></div>' +
             '<div class="pl" data-empty="' + esc(t('noOneYet')) + '">' + l.map(function (p) { return '<button class="pchip' + (sel === p.id ? ' sel' : '') + '" type="button" data-mv="' + p.id + '"><i style="background:' + p.color + '">' + esc(p.name[0].toUpperCase()) + '</i><span>' + esc(p.name) + '</span></button>'; }).join('') + '</div></div>';
-        }).join('') +
+        }).join('')) +
         '<button class="btn big" type="button" data-back>' + esc(t('done')) + '</button>';
       $('#add', view).onsubmit = function (e) {
         e.preventDefault(); var v = $('#pn', view).value;
@@ -105,6 +107,7 @@
         if (H.addPlayer(v)) { H.haptic(10); draw(); var i = $('#pn', view); i.focus(); }
       };
       $$('[data-rm]', view).forEach(function (b) { b.onclick = function () { H.removePlayer(b.dataset.rm); draw(); }; });
+      $$('[data-play]', view).forEach(function (b) { b.onclick = function () { H.setPlay(b.dataset.play); H.haptic(10); draw(); }; });
       $$('[data-tc]', view).forEach(function (b) { b.onclick = function () { H.setTeamCount(+b.dataset.tc); draw(); }; });
       $$('[data-mode]', view).forEach(function (b) { b.onclick = function () { S.teams.mode = b.dataset.mode; if (S.teams.mode === 'random') H.randomTeams(); H.save(); draw(); }; });
       var sh = $('#shuf', view); if (sh) sh.onclick = function () { H.randomTeams(); H.sfx('tick', .6); H.haptic(15); draw(); };
@@ -183,6 +186,13 @@
     try { var o = JSON.parse(unb64u(code)); if (!o || typeof o.n !== 'string' || !Array.isArray(o.w)) return null; var w = parseWords(o.w.join('\n')); return w.length ? { name: o.n.slice(0, 30), words: w } : null; } catch (e) { return null; }
   }
   H.packLink = packLink; H.readPack = readPack;
+  // draw a QR code for text into el (the library loads once, then works offline)
+  H.qr = function (el, text) {
+    loadQR().then(function (ok) {
+      if (!ok) { el.innerHTML = '<span style="color:#555;font-size:13px;max-width:200px;text-align:center">' + esc(t('qrOffline')) + '</span>'; return; }
+      el.innerHTML = ''; try { new window.QRCode(el, { text: text, width: 400, height: 400, correctLevel: window.QRCode.CorrectLevel.M }); } catch (e) {}
+    });
+  };
   function loadQR() {
     if (window.QRCode) return Promise.resolve(true);
     return new Promise(function (ok) { var s = document.createElement('script'); s.src = QR_LIB; s.onload = function () { ok(!!window.QRCode); }; s.onerror = function () { ok(false); }; document.head.appendChild(s); });
@@ -257,21 +267,49 @@
   H.route('score', function (view) {
     route = 'score';
     function draw() {
-      var lists = H.teamLists(), max = Math.max.apply(null, S.score.pts.slice(0, S.teams.count));
-      view.innerHTML = H.bar(t('score'), t('scoreSub')) +
-        lists.map(function (l, i) {
-          var p = S.score.pts[i] || 0;
-          return '<div class="score-row' + (p && p === max ? ' lead' : '') + '" style="--tc:' + H.teamColor(i) + '"><span class="sw"></span><b>' + esc(H.teamName(i)) + '<br><small class="mute" style="font:600 13px var(--fb)">' + esc(l.map(function (x) { return x.name; }).join(', ') || t('noOneYet')) + '</small></b>' +
-            '<span class="pm"><button type="button" data-m="' + i + '" aria-label="−1">−</button></span><span class="pts">' + p + '</span><span class="pm"><button type="button" data-p="' + i + '" aria-label="+1">+</button></span></div>';
-        }).join('') +
+      view.innerHTML = H.bar(t('score'), t('scoreSub')) + scoreRows(true) +
         '<button class="btn alt" type="button" id="reset">' + esc(t('resetNight')) + '</button>';
-      $$('[data-p]', view).forEach(function (b) { b.onclick = function () { H.addPoints(+b.dataset.p, 1, 'manual'); H.haptic(8); draw(); }; });
-      $$('[data-m]', view).forEach(function (b) { b.onclick = function () { H.addPoints(+b.dataset.m, -1, 'manual'); H.haptic(8); draw(); }; });
+      bindScoreRows(view, draw);
       var r = $('#reset', view);
       r.onclick = function () { if (!r.dataset.sure) { r.dataset.sure = 1; r.textContent = t('resetSure'); return; } H.resetScore(); S.night = null; H.save(); draw(); };
     }
     draw();
   });
+
+  // One row per side (team, or player in Individual), with optional − / + buttons
+  function scoreRows(edit) {
+    var lists = H.teamLists(), n = H.sideCount(), max = 0, i;
+    if (!n) return '<p class="hint">' + esc(t('noPlayers')) + '</p>';
+    for (i = 0; i < n; i++) max = Math.max(max, H.pointsOf(i));
+    return lists.map(function (l, i) {
+      var p = H.pointsOf(i), who = H.solo() ? '' : '<br><small class="mute" style="font:600 13px var(--fb)">' + esc(l.map(function (x) { return x.name; }).join(', ') || t('noOneYet')) + '</small>';
+      return '<div class="score-row' + (p && p === max ? ' lead' : '') + '" style="--tc:' + H.teamColor(i) + '"><span class="sw"></span><b>' + esc(H.teamName(i)) + who + '</b>' +
+        (edit ? '<span class="pm"><button type="button" data-m="' + i + '" aria-label="−1">−</button></span>' : '') + '<span class="pts">' + p + '</span>' +
+        (edit ? '<span class="pm"><button type="button" data-p="' + i + '" aria-label="+1">+</button></span>' : '') + '</div>';
+    }).join('');
+  }
+  function bindScoreRows(root, redraw) {
+    $$('[data-p]', root).forEach(function (b) { b.onclick = function () { H.addPoints(+b.dataset.p, 1, 'manual'); H.haptic(8); redraw(); }; });
+    $$('[data-m]', root).forEach(function (b) { b.onclick = function () { H.addPoints(+b.dataset.m, -1, 'manual'); H.haptic(8); redraw(); }; });
+  }
+  // During a game the trophy opens the scoreboard as a panel over the game; timers pause until you go back.
+  function scoreSheet() {
+    if ($('#scoreSheet')) return;
+    H.pauseAll();
+    var ov = document.createElement('div'); ov.className = 'sheetov'; ov.id = 'scoreSheet';
+    function close() { ov.remove(); H.resumeAll(); }
+    function draw() {
+      ov.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(t('score')) + '"><h2>' + esc(t('score')) + '</h2>' +
+        '<p class="sub" style="margin:0">' + esc(t('pausedNote')) + '</p>' + scoreRows(true) +
+        '<button class="btn big" type="button" id="resume">' + svg('back', 20) + esc(t('backToGame')) + '</button></div>';
+      bindScoreRows(ov, draw);
+      $('#resume', ov).onclick = close;
+    }
+    ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+    draw();
+    $('#app').appendChild(ov);
+    H.onLeave(function () { ov.remove(); });
+  }
 
   /* After a game ends (not in Party Night) */
   H.route('done', function (view, o) {
@@ -282,7 +320,7 @@
   });
   function standings() {
     var rows = [];
-    for (var i = 0; i < S.teams.count; i++) rows.push({ i: i, p: S.score.pts[i] || 0 });
+    for (var i = 0; i < H.sideCount(); i++) rows.push({ i: i, p: H.pointsOf(i) });
     rows.sort(function (a, b) { return b.p - a.p; });
     return rows.map(function (r, k) { return '<div class="score-row' + (k === 0 && r.p ? ' lead' : '') + '" style="--tc:' + H.teamColor(r.i) + '"><span class="sw"></span><b>' + esc(H.teamName(r.i)) + '</b><span class="pts">' + r.p + '</span></div>'; }).join('');
   }
@@ -323,7 +361,8 @@
   }
   function finale(view) {
     var rows = [];
-    for (var i = 0; i < S.teams.count; i++) rows.push({ i: i, p: S.score.pts[i] || 0 });
+    for (var i = 0; i < H.sideCount(); i++) rows.push({ i: i, p: H.pointsOf(i) });
+    if (!rows.length) rows.push({ i: 0, p: 0 });
     rows.sort(function (a, b) { return b.p - a.p; });
     var order = [1, 0, 2, 3].filter(function (k) { return k < rows.length; });   // 2nd, 1st, 3rd, 4th on the podium
     view.innerHTML = H.bar(t('finalResults'), t('partyNight')) +
@@ -343,6 +382,7 @@
     if (b.hasAttribute('data-back')) { back(); return; }
     var to = b.getAttribute('data-go');
     if (route === 'hub' && to !== 'hub') { try { history.pushState({ inner: 1 }, ''); } catch (err) {} }
+    if (to === 'score' && route.indexOf('game:') === 0) { scoreSheet(); return; }
     if (to.indexOf('game:') === 0) route = to;
     H.go(to);
   });

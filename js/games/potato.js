@@ -40,6 +40,7 @@
         $('#newcat', view).onclick = function () { cat = deck.next(cat); $('#cat', view).textContent = cat.w; H.haptic(10); };
         // the tick speeds up as the fuse burns, without telling anyone when it ends
         H.every(function () {
+          if (H.isPaused()) { t0 += 50; return; }      // scoreboard open: the fuse waits too
           var el = Date.now() - t0;
           if (el >= fuse) { boom(); return; }
           if (el >= nextBeat) {
