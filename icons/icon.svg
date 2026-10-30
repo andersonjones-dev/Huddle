@@ -1,14 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="#2a1d6e"/><stop offset="1" stop-color="#0d0b24"/></radialGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <g stroke="#0d0b24" stroke-width="14">
-    <circle cx="256" cy="168" r="74" fill="#ff2bd6"/>
-    <circle cx="344" cy="256" r="74" fill="#39e6ff"/>
-    <circle cx="256" cy="344" r="74" fill="#c6ff3d"/>
-    <circle cx="168" cy="256" r="74" fill="#ff7a1a"/>
-  </g>
-  <circle cx="256" cy="256" r="40" fill="#fff"/>
-  <path d="M256 230l7 17 18 2-14 11 4 18-15-10-15 10 4-18-14-11 18-2z" fill="#0d0b24"/>
-</svg>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" fill="#1E1B3A"></rect><circle cx="256" cy="280" r="196" fill="#2C2858"></circle><path d="M256 280L256.0 104.0A176 176 0 0 1 408.4 192.0z" fill="#FF6B6B"></path><path d="M256 280L408.4 192.0A176 176 0 0 1 408.4 368.0z" fill="#FFC93C"></path><path d="M256 280L408.4 368.0A176 176 0 0 1 256.0 456.0z" fill="#4CC38A"></path><path d="M256 280L256.0 456.0A176 176 0 0 1 103.6 368.0z" fill="#5BB6FF"></path><path d="M256 280L103.6 368.0A176 176 0 0 1 103.6 192.0z" fill="#A98BFF"></path><path d="M256 280L103.6 192.0A176 176 0 0 1 256.0 104.0z" fill="#FF9F43"></path><circle cx="256" cy="280" r="176" fill="none" stroke="#1E1B3A" stroke-width="16"></circle><circle cx="256.0" cy="126.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="389.4" cy="203.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="389.4" cy="357.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="256.0" cy="434.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="122.6" cy="357.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="122.6" cy="203.0" r="10" fill="#fff" stroke="#1E1B3A" stroke-width="4"></circle><circle cx="256" cy="280" r="44" fill="#FFF8E7" stroke="#1E1B3A" stroke-width="12"></circle><path d="M232.96 253.6h12.48v20.400000000000006h21.119999999999997v-20.400000000000006h12.48v52.8h-12.48v-20.399999999999977h-21.119999999999997v20.399999999999977h-12.48z" fill="#1E1B3A" stroke="#1E1B3A" stroke-width="2" stroke-linejoin="round" paint-order="stroke"></path><path d="M256 140 222 72a36 36 0 1 1 68 0z" fill="#FFC93C" stroke="#0B0A1F" stroke-width="12" stroke-linejoin="round"></path><circle cx="256" cy="62" r="12" fill="#fff"></circle></svg>
