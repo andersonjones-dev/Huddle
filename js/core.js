@@ -132,7 +132,8 @@
   function setMode(m) { S.mode = m === 'everyday' ? 'everyday' : 'bible'; save(); }
   function allPacks() { return D.PACKS.concat(S.custom.map(function (c) { return { id: c.id, name: c.name, kn: c.name, en: c.name, lang: c.lang || 'en', custom: true, on: true, items: c.words.map(function (w) { return { w: w, ref: '', fact: '', kid: true, pack: c.id }; }) }; })); }
   function sidePacks() { return allPacks().filter(function (p) { return p.custom || p.mode === mode(); }); }
-  // Kannada packs start on only when the app is in Kannada; a pack you switch on or off stays that way
+  // Kannada packs start on only when the app is in Kannada; a pack you switch on or off stays that way.
+  // Packs marked lang 'any' (the DJNC Songbook) start on in both languages.
   function packOn(p) { var v = S.packsOn[p.id]; if (v != null) return !!v; if (p.lang === 'kn' && !p.custom) return S.lang === 'kn'; return p.on !== false; }
   function pool(opts) {
     opts = opts || {};

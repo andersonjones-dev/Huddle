@@ -57,7 +57,7 @@ test('Kannada packs come on with the Kannada interface; songs stay in Hum', func
   S.lang = 'en'; assert.ok(!H.pool().some(function (x) { return x.pack === 'knbible'; }));
   S.lang = 'kn'; assert.ok(H.pool().some(function (x) { return x.pack === 'knbible'; }));
   assert.ok(!H.pool().some(function (x) { return x.pack === 'hymns'; }));
-  assert.ok(H.pool({ songs: true }).every(function (x) { return x.pack === 'hymns'; }));
+  assert.ok(H.pool({ songs: true }).every(function (x) { return x.pack === 'hymns' || x.pack === 'djnc'; }));
   S.lang = 'en';
 });
 test('every pack switched off still leaves words to play', function () {
@@ -168,5 +168,14 @@ test('the stylesheet has no stray lines that would break a look', function () {
   if (depth) problems.push('unclosed {');
   assert.deepStrictEqual(problems, []);
   ['playful', 'comic', 'arcade', 'graffiti'].forEach(function (th) { assert.ok(css.indexOf('.app[data-theme="' + th + '"]{') >= 0, th + ' settings block'); });
+});
+test('every DJNC Songbook title is in Hum That Tune on the Bible side', function () {
+  var djnc = H.D.PACKS.filter(function (p) { return p.id === 'djnc'; })[0];
+  assert.ok(djnc && djnc.songs && djnc.mode === 'bible' && djnc.items.length >= 330);
+  S.lang = 'en'; H.setMode('bible');
+  assert.strictEqual(H.pool({ songs: true }).filter(function (x) { return x.pack === 'djnc'; }).length, djnc.items.length);   // on in English too
+  H.setMode('everyday');
+  assert.ok(!H.pool({ songs: true }).some(function (x) { return x.pack === 'djnc'; }));
+  H.setMode('bible');
 });
 console.log('\n' + n + ' tests passed');

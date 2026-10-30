@@ -376,7 +376,7 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
   --bg:var(--color-bg);--card:var(--color-surface);--ink:var(--color-text);--mute:var(--color-text-muted);--line:var(--color-border);
   --a1:var(--color-primary);--a1ink:var(--color-on-primary);--a2:var(--color-secondary);--a2ink:#1E1B3A;--a3:var(--color-tertiary);--a3ink:#1E1B3A;--a4:var(--color-quaternary);
   --fd:var(--font-display);--fdw:700;--fb:var(--font-body);--r:var(--radius-lg);--bw:2.5px;--sh:var(--shadow-2);
-  --pat:var(--scene-hills) left bottom/100% 130px no-repeat,var(--scene-sun) right 14% bottom 58px/120px no-repeat,var(--scene-cloud) left -34px top 47%/120px no-repeat,var(--scene-cloud) right -22px top 70%/96px no-repeat}
+  --pat:var(--scene-hills) left bottom/100% 130px no-repeat,var(--scene-sun) right 4% bottom 64px/92px no-repeat,var(--scene-cloud) left -34px top 47%/120px no-repeat,var(--scene-cloud) right -22px top 70%/96px no-repeat}
 @media (prefers-color-scheme: dark){.app[data-theme="playful"]:not([data-mode="light"]){
   --color-bg:#1A1838;--color-surface:#27244D;--color-text:#FFF8E7;--color-text-muted:#B7B2DA;--color-border:#0B0A1F;
   --color-primary:#FFC93C;--color-secondary:#4CC38A;--color-tertiary:#FF7A7A;--color-quaternary:#B49BFF;--color-on-primary:#1E1B3A;--color-danger:#FF6B6B;
