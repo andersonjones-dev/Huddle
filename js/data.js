@@ -888,6 +888,32 @@
     [['Pencil', 'Eraser', 'Ruler', 'Pillow'], 'Pillow', 'The rest go in a school bag', 1, E]
   ];
 
+
+  // Hot Seat: questions the group fires at the player in the hot seat. [question, side]
+  var SEAT_Q = [
+    ['Where did you grow up?', B], ['Who is in your family?', B], ['What work did you do?', B], ['What was the hardest thing God asked of you?', B],
+    ['Which part of the Bible is your story in?', B], ['What would you tell young people today?', B], ['What is the most amazing thing you saw?', B],
+    ['Did you ever make a big mistake?', B], ['Who was your closest friend?', B], ['Where did you travel?', B], ['How did your story end?', B],
+    ['Were you ever afraid? Of what?', B], ['Did you meet Jesus, or live before him?', B], ['What would you never forget?', B], ['Who did you have to stand up to?', B],
+    ['Where do you live?', E], ['What do you do all day?', E], ['Who are your friends?', E], ['What is your favourite food?', E], ['What scares you?', E],
+    ['What is your special skill?', E], ['What do you usually wear?', E], ['Tell us about your best day ever', E], ['Who or what is your enemy?', E],
+    ['What makes you laugh?', E], ['What sound do you make?', E], ['What would you buy with a lakh rupees?', E], ['Where do you go on holiday?', E], ['What are you famous for?', E]
+  ];
+  // Hot Seat, Everyday side: who you could be (the Bible side uses the Bible people pack)
+  var SEAT_E = ['Mickey Mouse', 'Tom the cat', 'Jerry the mouse', 'Chhota Bheem', 'Doraemon', 'Nobita', 'Shin-chan', 'Motu', 'Patlu', 'SpongeBob', 'Mr. Bean', 'Spider-Man',
+    'Batman', 'Superman', 'Shrek', 'Cinderella', 'Pinocchio', 'Harry Potter', 'Elsa', 'Simba', 'Mowgli', 'Baloo the bear', 'Nemo', 'Dory', 'Buzz Lightyear', 'Woody',
+    'Po the panda', 'Iron Man', 'An astronaut', 'A firefighter', 'A magician', 'A farmer', 'A chef', 'A pilot', 'A traffic policeman', 'A cricket umpire', 'An auto driver',
+    'A school teacher', 'A dentist', 'A zookeeper', 'A wedding photographer', 'A pizza delivery rider'];
+  // Ark Match / Memory Match cards: [picture, name, side]
+  var MATCH = [
+    ['🦁', 'Lions', B], ['🐘', 'Elephants', B], ['🦒', 'Giraffes', B], ['🐒', 'Monkeys', B], ['🐑', 'Sheep', B], ['🐄', 'Cows', B], ['🐎', 'Horses', B], ['🐪', 'Camels', B],
+    ['🐻', 'Bears', B], ['🦓', 'Zebras', B], ['🐇', 'Rabbits', B], ['🐢', 'Tortoises', B], ['🦊', 'Foxes', B], ['🐓', 'Roosters', B], ['🐖', 'Pigs', B], ['🦉', 'Owls', B],
+    ['🕊️', 'Doves', B], ['🌈', 'Rainbows', B], ['🐸', 'Frogs', B], ['🦌', 'Deer', B],
+    ['🛺', 'Auto', E], ['🏏', 'Cricket bat', E], ['🥭', 'Mango', E], ['☕', 'Chai', E], ['🪁', 'Kite', E], ['🎂', 'Cake', E], ['🚂', 'Train', E], ['☂️', 'Umbrella', E],
+    ['🍦', 'Ice cream', E], ['⚽', 'Football', E], ['🎈', 'Balloon', E], ['🌶️', 'Chilli', E], ['🍕', 'Pizza', E], ['📱', 'Phone', E], ['🚲', 'Bicycle', E], ['🎸', 'Guitar', E],
+    ['🥥', 'Coconut', E], ['🍌', 'Banana', E], ['🚀', 'Rocket', E], ['🎁', 'Present', E]
+  ];
+
   function parse(p) {
     return p.words.map(function (s) {
       var a = s.split('|');
@@ -905,6 +931,9 @@
     CHALLENGES: CHALLENGES.map(function (c) { return { w: c[0], kid: !!c[1], mode: c[2] }; }),
     VERSES: VERSES.map(function (v) { return { before: v[0], word: v[1], after: v[2], ref: v[3], kid: !!v[4], mode: B, lang: 'en' }; }),
     SAYINGS: SAYINGS.map(function (v) { return { before: v[0], word: v[1], after: v[2], ref: v[3], kid: !!v[4], mode: E, lang: v[5] }; }),
-    ODDS: ODDS.map(function (o) { return { words: o[0], odd: o[1], why: o[2], kid: !!o[3], mode: o[4] }; })
+    ODDS: ODDS.map(function (o) { return { words: o[0], odd: o[1], why: o[2], kid: !!o[3], mode: o[4] }; }),
+    SEAT_Q: SEAT_Q.map(function (q) { return { w: q[0], kid: true, mode: q[1] }; }),
+    SEAT_E: SEAT_E.map(function (w) { return { w: w, ref: '', fact: '', kid: true, mode: E }; }),
+    MATCH: MATCH.map(function (m) { return { pic: m[0], w: m[1], kid: true, mode: m[2] }; })
   };
 })();

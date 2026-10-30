@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$, $$ = H.$$, svg = H.svg;
-  var ORDER = ['act', 'forbid', 'one', 'draw', 'hum', 'potato', 'likely', 'spin', 'verse', 'odd'];
+  var ORDER = ['act', 'forbid', 'one', 'draw', 'hum', 'seat', 'potato', 'likely', 'spin', 'match', 'verse', 'odd'];
   // [id, name, swatch, light theme-color, dark theme-color (looks that follow the phone's dark mode)]
   var THEMES = [['playful', 'Illustrated & Playful', 'linear-gradient(135deg,#DDF1FF 50%,#FFC93C 50%)', '#DDF1FF', '#1A1838'],
     ['comic', 'Comic Splash', 'linear-gradient(135deg,#ffd400 50%,#ff2e2e 50%)', '#fff7c7'],

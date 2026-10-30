@@ -264,6 +264,7 @@
      fuse:  how long Hot Potato's hidden timer can run. */
   var TIMES = [30, 45, 60, 90, 120, 180], COUNTS = [5, 10, 20, 0], FUSES = ['short', 'medium', 'long', 'random'];
   var FUSE_MS = { short: [8000, 18000], medium: [15000, 45000], long: [35000, 75000], random: [8000, 75000] };
+  function fill(str, o) { return String(str).replace(/\{(\w+)\}/g, function (m, k) { return o[k] != null ? o[k] : m; }); }
   function fmt(sec) { sec = Math.max(0, Math.round(sec)); return sec < 60 ? String(sec) : Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
   function timeLabel(sec) { if (sec < 60) return sec + ' ' + t('sec'); if (sec % 60 === 0) return (sec / 60) + ' ' + t('min'); if (sec % 60 === 30) return Math.floor(sec / 60) + '½ ' + t('min'); return fmt(sec); }
   function roundTime(gid) { var v = +S.times[gid]; return v >= 15 && v <= 600 ? v : S.time; }
@@ -386,7 +387,7 @@
     isPaused: isPaused, pauseAll: pauseAll, resumeAll: resumeAll,
     allPacks: allPacks, packOn: packOn, pool: pool, wordLang: wordLang, list: list,
     sfx: sfx, audioOn: audioOn, haptic: haptic, wake: wake, later: later, every: every, countdown: countdown, stopTimers: stopTimers,
-    toast: toast, onLeave: onLeave, fmt: fmt, roundTime: roundTime, playCount: playCount, fuseRange: fuseRange, pickerHTML: pickerHTML, bindPicker: bindPicker, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,
+    toast: toast, onLeave: onLeave, fill: fill, fmt: fmt, roundTime: roundTime, playCount: playCount, fuseRange: fuseRange, pickerHTML: pickerHTML, bindPicker: bindPicker, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,
     endButtons: endButtons, confetti: confetti, TEAM_COLORS: TEAM_COLORS,
     // a game can have its own name and description on the Everyday side (g.everyday = {name, desc, how})
     gname: function (g) { var e = mode() === 'everyday' && g.everyday; if (S.lang === 'kn') { var k = e ? I.gamesKn[g.id + 'E'] : I.gamesKn[g.id]; if (k) return k[0]; } return e ? e.name : g.name; },

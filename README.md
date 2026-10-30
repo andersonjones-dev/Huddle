@@ -15,6 +15,8 @@ Bible and everyday word packs, in English and ಕನ್ನಡ. Works offline onc
 | Spin the Challenge | Flick the prize wheel; it lands on a player, who gets a challenge |
 | Fill the Verse | Host reads a KJV verse with a missing word; teams shout, or buzz on their own phones through Firstbuzz |
 | Odd One Out | Four words, one doesn't belong |
+| Hot Seat | The hot seat secretly becomes a Bible character (Everyday: a famous character or job) and answers questions in character until their team guesses |
+| Ark Match | Memory cards: pair the animals two by two (Everyday: Memory Match) |
 
 Also: players and teams (random or choose yourself) or individual play, a round length / question count for every game, one scoreboard for the night,
 Party Night (a running order of games with standings and a podium), Kids mode,

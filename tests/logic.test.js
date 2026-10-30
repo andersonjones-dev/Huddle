@@ -6,7 +6,7 @@ global.localStorage = { getItem: function (k) { return store[k] || null; }, setI
 global.document = { addEventListener: function () {}, querySelector: function () { return null; }, hidden: false };
 try { global.navigator = {}; } catch (e) { /* Node 21+ has its own */ }
 global.window = global;
-['data', 'i18n', 'core', 'games/words', 'games/act', 'games/spin', 'games/quiz'].forEach(function (f) { require(path.join(__dirname, '..', 'js', f + '.js')); });
+['data', 'i18n', 'core', 'games/words', 'games/act', 'games/spin', 'games/quiz', 'games/match', 'games/seat'].forEach(function (f) { require(path.join(__dirname, '..', 'js', f + '.js')); });
 var H = window.Huddle, S = H.S, n = 0;
 function test(name, fn) { fn(); n++; console.log('ok  ' + name); }
 
@@ -101,7 +101,8 @@ test('every interface text has a Kannada version', function () {
 function allText(side) {
   var D = H.D, out = [];
   D.PACKS.filter(function (p) { return p.mode === side; }).forEach(function (p) { p.items.forEach(function (x) { out.push(x.w); }); });
-  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES'].forEach(function (k) { D[k].filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.w); }); });
+  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES', 'SEAT_Q', 'SEAT_E'].forEach(function (k) { D[k].filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.w); }); });
+  D.MATCH.filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.pic); out.push(x.w); });
   D.VERSES.concat(D.SAYINGS).filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.before + ' ' + x.word + x.after); });
   D.ODDS.filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.words.slice().sort().join('/')); });
   return out;
@@ -109,11 +110,11 @@ function allText(side) {
 test('every built-in pack and prompt belongs to exactly one side', function () {
   var D = H.D, bad = [];
   D.PACKS.forEach(function (p) { if (p.mode !== 'bible' && p.mode !== 'everyday') bad.push(p.id); });
-  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES', 'VERSES', 'SAYINGS', 'ODDS'].forEach(function (k) { D[k].forEach(function (x) { if (x.mode !== 'bible' && x.mode !== 'everyday') bad.push(k + ':' + (x.w || x.word)); }); });
+  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES', 'VERSES', 'SAYINGS', 'ODDS', 'SEAT_Q', 'SEAT_E', 'MATCH'].forEach(function (k) { D[k].forEach(function (x) { if (x.mode !== 'bible' && x.mode !== 'everyday') bad.push(k + ':' + (x.w || x.word)); }); });
   assert.deepStrictEqual(bad, []);
 });
 test('no content appears on both sides', function () {
-  var norm = function (w) { return String(w).toLowerCase().replace(/[^a-z0-9ಀ-೿]+/g, ' ').trim(); };
+  var norm = function (w) { var n = String(w).toLowerCase().replace(/[^a-z0-9\u0c80-\u0cff]+/g, ' ').trim(); return n || String(w); };   // emoji compare as themselves
   var b = {}; allText('bible').forEach(function (w) { b[norm(w)] = w; });
   var both = allText('everyday').filter(function (w) { return b[norm(w)]; });
   assert.deepStrictEqual(both, []);
@@ -207,5 +208,16 @@ test('Individual play: every player is their own side, scored separately from te
 });
 test('timers pause while the scoreboard is open', function () {
   H.pauseAll(); assert.ok(H.isPaused()); H.resumeAll(); assert.ok(!H.isPaused());
+});
+test('Ark Match and Hot Seat have enough on both sides, and match cards are all different', function () {
+  ['bible', 'everyday'].forEach(function (m) {
+    H.setMode(m);
+    var cards = H.list('MATCH'); assert.ok(cards.length >= 12, m + ' match cards');
+    assert.strictEqual(new Set(cards.map(function (c) { return c.pic; })).size, cards.length);
+    assert.ok(H.list('SEAT_Q').length >= 12, m + ' hot seat questions');
+  });
+  H.setMode('everyday'); assert.ok(H.list('SEAT_E').length >= 30);
+  H.setMode('bible'); assert.strictEqual(H.gname(H.games.match), 'Ark Match');
+  H.setMode('everyday'); assert.strictEqual(H.gname(H.games.match), 'Memory Match'); H.setMode('bible');
 });
 console.log('\n' + n + ' tests passed');

@@ -95,6 +95,11 @@
     pointTo: 'Point to', whoIs: 'Who is {name}?', connecting: 'Setting up buzzers…', needNet: 'Phone buzzers need internet. Play by shouting for now.', scanToJoin: 'Scan to join',
     orOpen: 'or open', sameNames: 'Use the same names as in Huddle so points go to the right team.', startQuiz: 'Start the quiz', noBuzzers: 'Play without buzzers',
     waitingJoin: 'Waiting for people to join…', joinMsg: 'Join the Huddle quiz on Firstbuzz with code', oddQ: 'Which is the odd one out?',
+    howManyPairs: 'How many pairs', pairs: 'pairs', matchNoNames: 'Add players to take turns and score. Without names it counts your moves.', card: 'Card', moves: 'Moves', pairsLeft: 'Pairs left',
+    stopped: 'Game stopped', allFound: 'All pairs found!', twoByTwo: 'Two by two', twoByTwoFact: 'There went in two and two unto Noah into the ark.',
+    inHotSeat: 'In the hot seat', seatNote: 'Only you look. You’re about to become someone else!', onlyHotSeat: 'Hot seat only', youAre: 'You are',
+    seatHint: 'Answer every question as this person, but never say the name.', hideGive: 'Hide it and give the phone to your team', seatWho: '{name} is in the hot seat',
+    askThis: 'Ask this, or your own', anotherQ: 'Another question', seatRule: 'Fire questions fast. Shout your guess any time.', theyWere: 'They were', notGuessed: 'Not guessed this time', nextPlayer: 'Next player',
     surprise: 'Surprise order', startNight: 'Start the night', nightNote: 'Points from every game add up on one scoreboard.', finalResults: 'Final results'
   };
   var KN2 = {
@@ -146,6 +151,11 @@
     pointTo: 'ಅಂಕ', whoIs: '{name} ಯಾರು?', connecting: 'ಬಜರ್ ಸಿದ್ಧವಾಗುತ್ತಿದೆ…', needNet: 'ಫೋನ್ ಬಜರ್‌ಗೆ ಇಂಟರ್ನೆಟ್ ಬೇಕು. ಸದ್ಯಕ್ಕೆ ಕೂಗಿ ಆಡಿ.', scanToJoin: 'ಸೇರಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
     orOpen: 'ಅಥವಾ ತೆರೆಯಿರಿ', sameNames: 'ಅಂಕ ಸರಿಯಾದ ತಂಡಕ್ಕೆ ಹೋಗಲು Huddle‌ನ ಅದೇ ಹೆಸರು ಬಳಸಿ.', startQuiz: 'ರಸಪ್ರಶ್ನೆ ಆರಂಭಿಸಿ', noBuzzers: 'ಬಜರ್ ಇಲ್ಲದೆ ಆಡಿ',
     waitingJoin: 'ಜನ ಸೇರಲು ಕಾಯುತ್ತಿದೆ…', joinMsg: 'Firstbuzz ನಲ್ಲಿ Huddle ರಸಪ್ರಶ್ನೆಗೆ ಸೇರಿ, ಕೋಡ್', oddQ: 'ಇವುಗಳಲ್ಲಿ ಹೊಂದದ್ದು ಯಾವುದು?',
+    howManyPairs: 'ಎಷ್ಟು ಜೋಡಿಗಳು', pairs: 'ಜೋಡಿ', matchNoNames: 'ಸರದಿ ಮತ್ತು ಅಂಕಕ್ಕೆ ಆಟಗಾರರನ್ನು ಸೇರಿಸಿ. ಹೆಸರಿಲ್ಲದೆ ನಡೆಗಳನ್ನು ಎಣಿಸುತ್ತದೆ.', card: 'ಕಾರ್ಡ್', moves: 'ನಡೆಗಳು', pairsLeft: 'ಉಳಿದ ಜೋಡಿಗಳು',
+    stopped: 'ಆಟ ನಿಲ್ಲಿಸಲಾಗಿದೆ', allFound: 'ಎಲ್ಲಾ ಜೋಡಿಗಳು ಸಿಕ್ಕವು!', twoByTwo: 'ಎರಡೆರಡಾಗಿ', twoByTwoFact: 'ಪ್ರಾಣಿಗಳು ಎರಡೆರಡಾಗಿ ನೋಹನ ನಾವೆಯೊಳಗೆ ಹೋದವು.',
+    inHotSeat: 'ಬಿಸಿ ಕುರ್ಚಿಯಲ್ಲಿ', seatNote: 'ನೀವು ಮಾತ್ರ ನೋಡಿ. ನೀವು ಬೇರೆಯವರಾಗಲಿದ್ದೀರಿ!', onlyHotSeat: 'ಬಿಸಿ ಕುರ್ಚಿಯವರಿಗೆ ಮಾತ್ರ', youAre: 'ನೀವು',
+    seatHint: 'ಈ ವ್ಯಕ್ತಿಯಾಗಿ ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ, ಆದರೆ ಹೆಸರು ಹೇಳಬೇಡಿ.', hideGive: 'ಮುಚ್ಚಿ ಫೋನನ್ನು ತಂಡಕ್ಕೆ ಕೊಡಿ', seatWho: '{name} ಬಿಸಿ ಕುರ್ಚಿಯಲ್ಲಿದ್ದಾರೆ',
+    askThis: 'ಇದನ್ನು ಅಥವಾ ನಿಮ್ಮದೇ ಕೇಳಿ', anotherQ: 'ಇನ್ನೊಂದು ಪ್ರಶ್ನೆ', seatRule: 'ಬೇಗ ಬೇಗ ಪ್ರಶ್ನೆ ಕೇಳಿ. ಯಾವಾಗ ಬೇಕಾದರೂ ಊಹಿಸಿ.', theyWere: 'ಅವರು', notGuessed: 'ಈ ಬಾರಿ ಊಹಿಸಲಿಲ್ಲ', nextPlayer: 'ಮುಂದಿನ ಆಟಗಾರ',
     surprise: 'ಅಚ್ಚರಿಯ ಕ್ರಮ', startNight: 'ರಾತ್ರಿ ಆರಂಭಿಸಿ', nightNote: 'ಎಲ್ಲಾ ಆಟಗಳ ಅಂಕಗಳು ಒಂದೇ ಅಂಕಪಟ್ಟಿಗೆ ಸೇರುತ್ತವೆ.', finalResults: 'ಅಂತಿಮ ಫಲಿತಾಂಶ'
   };
   Object.keys(EN2).forEach(function (k) { EN[k] = EN2[k]; });
@@ -162,7 +172,11 @@
     spin: ['ಚಕ್ರ ತಿರುಗಿಸು', 'ಆಟಗಾರ ಮತ್ತು ಸವಾಲಿಗಾಗಿ ಚಕ್ರ ತಿರುಗಿಸಿ.'],
     verse: ['ವಚನ ಪೂರ್ಣಗೊಳಿಸು', 'ಬೈಬಲ್ ವಚನವನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.'],
     verseE: ['ಗಾದೆ ಪೂರ್ಣಗೊಳಿಸು', 'ಪ್ರಸಿದ್ಧ ಗಾದೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.'],
-    odd: ['ಬೇರೆಯದು ಯಾವುದು?', 'ನಾಲ್ಕರಲ್ಲಿ ಹೊಂದದ್ದನ್ನು ಹುಡುಕಿ.']
+    odd: ['ಬೇರೆಯದು ಯಾವುದು?', 'ನಾಲ್ಕರಲ್ಲಿ ಹೊಂದದ್ದನ್ನು ಹುಡುಕಿ.'],
+    match: ['ನಾವೆಯ ಜೋಡಿ', 'ಕಾರ್ಡ್ ತಿರುಗಿಸಿ ಪ್ರಾಣಿಗಳ ಜೋಡಿ ಹುಡುಕಿ.'],
+    matchE: ['ಜೋಡಿ ಹುಡುಕು', 'ಎರಡು ಕಾರ್ಡ್ ತಿರುಗಿಸಿ ಜೋಡಿ ಹುಡುಕಿ.'],
+    seat: ['ಬಿಸಿ ಕುರ್ಚಿ', 'ರಹಸ್ಯ ಬೈಬಲ್ ವ್ಯಕ್ತಿಯಾಗಿ ಚುರುಕಾಗಿ ಉತ್ತರಿಸಿ.'],
+    seatE: ['ಬಿಸಿ ಕುರ್ಚಿ', 'ರಹಸ್ಯ ಪ್ರಸಿದ್ಧ ಪಾತ್ರವಾಗಿ ಚುರುಕಾಗಿ ಉತ್ತರಿಸಿ.']
   };
   window.HuddleI18n = { en: EN, kn: KN, gamesKn: GAMES_KN };
 })();
