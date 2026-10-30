@@ -24,7 +24,7 @@ four looks (Illustrated & Playful, Pop Art Comic, Arcade Night, Graffiti; the fi
 ## Files
 
 - `index.html` – the page and icons
-- `css/app.css` – all styles and the three looks
+- `css/app.css` – all styles and the four looks
 - `js/data.js` – **word packs and prompts; edit freely** (format explained at the top)
 - `js/i18n.js` – English and Kannada interface text
 - `js/core.js` – saved settings, teams, scoring, sound and vibration
