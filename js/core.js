@@ -272,7 +272,7 @@
   function pickerHTML(kind, gid) {
     var cur, opts, label;
     if (kind === 'time') { cur = roundTime(gid); label = t('roundTime'); opts = TIMES.map(function (v) { return [v, timeLabel(v)]; }); }
-    else if (kind === 'count') { cur = playCount(gid); label = t('howMany'); opts = COUNTS.map(function (v) { return [v, v ? String(v) : t('unlimited')]; }); }
+    else if (kind === 'count') { cur = playCount(gid); label = t({ likely: 'howManyRounds', verse: 'howManyQs', odd: 'howManyQs', spin: 'howManySpins', one: 'howManyWords' }[gid] || 'howMany'); opts = COUNTS.map(function (v) { return [v, v ? String(v) : t('unlimited')]; }); }
     else { cur = S.fuse; label = t('bombTimer'); opts = FUSES.map(function (v) { return [v, t('fuse_' + v)]; }); }
     var custom = kind === 'time' && TIMES.indexOf(cur) < 0;
     return '<div class="pick" data-pick="' + kind + '"><div class="pick-lbl">' + esc(label) + '</div><div class="chips wrap pick-row">' +
