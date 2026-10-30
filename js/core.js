@@ -14,7 +14,7 @@
   /* ---------------- saved state ---------------- */
   function fresh() {
     return {
-      v: 1, lang: 'en', theme: 'playful', appear: 'light', mode: 'bible', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
+      v: 1, lang: 'en', theme: 'playful', appear: 'light', mode: 'bible', times: {}, counts: {}, fuse: 'medium', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
       players: [], teams: { count: 2, mode: 'random', names: TEAM_NAMES.slice(), of: {} },
       packsOn: {}, custom: [],
       night: null,          // { plan: [gameIds], i: 0 }
@@ -36,6 +36,8 @@
     if (!s.score || !Array.isArray(s.score.pts)) s.score = f.score;
     while (s.score.pts.length < 4) s.score.pts.push(0);
     if (!Array.isArray(s.custom)) s.custom = [];
+    if (!s.times || typeof s.times !== 'object') s.times = {};
+    if (!s.counts || typeof s.counts !== 'object') s.counts = {};
     return s;
   }
   var S = load();
@@ -232,6 +234,51 @@
     };
   }
 
+
+  /* ---------------- how long to play ----------------
+     time:  round length for timed games (per game, saved).  Custom: 15 s to 10 min in 15 s steps.
+     count: questions or spins per game (0 = unlimited).
+     fuse:  how long Hot Potato's hidden timer can run. */
+  var TIMES = [30, 45, 60, 90, 120, 180], COUNTS = [5, 10, 20, 0], FUSES = ['short', 'medium', 'long', 'random'];
+  var FUSE_MS = { short: [8000, 18000], medium: [15000, 45000], long: [35000, 75000], random: [8000, 75000] };
+  function fmt(sec) { sec = Math.max(0, Math.round(sec)); return sec < 60 ? String(sec) : Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
+  function timeLabel(sec) { if (sec < 60) return sec + ' ' + t('sec'); if (sec % 60 === 0) return (sec / 60) + ' ' + t('min'); if (sec % 60 === 30) return Math.floor(sec / 60) + '½ ' + t('min'); return fmt(sec); }
+  function roundTime(gid) { var v = +S.times[gid]; return v >= 15 && v <= 600 ? v : S.time; }
+  function playCount(gid) { var v = S.counts[gid]; return v == null ? 0 : +v; }
+  function fuseRange() { return FUSE_MS[S.fuse] || FUSE_MS.medium; }
+  function pickerHTML(kind, gid) {
+    var cur, opts, label;
+    if (kind === 'time') { cur = roundTime(gid); label = t('roundTime'); opts = TIMES.map(function (v) { return [v, timeLabel(v)]; }); }
+    else if (kind === 'count') { cur = playCount(gid); label = t('howMany'); opts = COUNTS.map(function (v) { return [v, v ? String(v) : t('unlimited')]; }); }
+    else { cur = S.fuse; label = t('bombTimer'); opts = FUSES.map(function (v) { return [v, t('fuse_' + v)]; }); }
+    var custom = kind === 'time' && TIMES.indexOf(cur) < 0;
+    return '<div class="pick" data-pick="' + kind + '"><div class="pick-lbl">' + esc(label) + '</div><div class="chips wrap pick-row">' +
+      opts.map(function (o) { return '<button class="chip" type="button" data-pv="' + o[0] + '" aria-pressed="' + (String(cur) === String(o[0])) + '">' + esc(o[1]) + '</button>'; }).join('') +
+      (kind === 'time' ? '<button class="chip" type="button" data-pv="custom" aria-pressed="' + custom + '">' + esc(t('custom')) + '</button>' : '') + '</div>' +
+      (kind === 'time' ? '<div class="stepper" ' + (custom ? '' : 'hidden') + '><button class="ib" type="button" data-step="-15" aria-label="−15 ' + esc(t('sec')) + '">−</button><b class="sv">' + esc(timeLabel(cur)) + '</b><button class="ib" type="button" data-step="15" aria-label="+15 ' + esc(t('sec')) + '">+</button></div>' : '') + '</div>';
+  }
+  function bindPicker(root, gid) {
+    $$('[data-pick]', root).forEach(function (box) {
+      var kind = box.dataset.pick;
+      function mark(v) { $$('[data-pv]', box).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.pv === String(v))); }); }
+      function showStep(on) { var st = $('.stepper', box); if (st) { st.hidden = !on; $('.sv', st).textContent = timeLabel(roundTime(gid)); } }
+      $$('[data-pv]', box).forEach(function (b) {
+        b.onclick = function () {
+          var v = b.dataset.pv; haptic(8);
+          if (kind === 'time') {
+            if (v === 'custom') { mark('custom'); showStep(true); return; }
+            S.times[gid] = +v; mark(v); showStep(false);
+          } else if (kind === 'count') { S.counts[gid] = +v; mark(v); }
+          else { S.fuse = v; mark(v); }
+          save();
+        };
+      });
+      $$('[data-step]', box).forEach(function (b) {
+        b.onclick = function () { S.times[gid] = Math.max(15, Math.min(600, roundTime(gid) + +b.dataset.step)); save(); haptic(6); showStep(true); };
+      });
+    });
+  }
+
   /* ---------------- toast ---------------- */
   var toastT = 0;
   function toast(msg) {
@@ -280,8 +327,10 @@
       '<p class="ho-lbl">' + esc(t('handTo')) + '</p><h1 class="ho-name">' + esc(o.name || '') + '</h1>' +
       (o.role ? '<p class="ho-role">' + esc(o.role) + '</p>' : '') +
       '<p class="ho-warn">' + esc(o.note || t('dontLook')) + '</p>' +
+      (o.pick ? pickerHTML(o.pick, o.gid) : '') +
       '<button class="btn big" type="button" id="hoGo">' + esc(o.button || t('tapWhenReady')) + '</button></div>';
     haptic(20);
+    if (o.pick) bindPicker(view, o.gid);
     $('#hoGo', view).onclick = function () { audioOn(); haptic(10); o.then(); };
   }
 
@@ -313,7 +362,7 @@
     addPoints: addPoints, resetScore: resetScore,
     allPacks: allPacks, packOn: packOn, pool: pool, wordLang: wordLang, list: list,
     sfx: sfx, audioOn: audioOn, haptic: haptic, wake: wake, later: later, every: every, countdown: countdown, stopTimers: stopTimers,
-    toast: toast, onLeave: onLeave, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,
+    toast: toast, onLeave: onLeave, fmt: fmt, roundTime: roundTime, playCount: playCount, fuseRange: fuseRange, pickerHTML: pickerHTML, bindPicker: bindPicker, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,
     endButtons: endButtons, confetti: confetti, TEAM_COLORS: TEAM_COLORS,
     // a game can have its own name and description on the Everyday side (g.everyday = {name, desc, how})
     gname: function (g) { var e = mode() === 'everyday' && g.everyday; if (S.lang === 'kn') { var k = e ? I.gamesKn[g.id + 'E'] : I.gamesKn[g.id]; if (k) return k[0]; } return e ? e.name : g.name; },

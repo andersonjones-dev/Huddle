@@ -507,3 +507,17 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 .app[data-theme="playful"][data-mode="dark"] .side-seg .mk-bible{color:#c9b5ff}.app[data-theme="playful"][data-mode="dark"] .side-seg .mk-everyday{color:#7fe0b0}
 .app[data-theme="comic"] .side-seg,.app[data-theme="graffiti"] .side-seg{border-radius:var(--r)}
 .app[data-theme="comic"] .side-seg button,.app[data-theme="graffiti"] .side-seg button{border-radius:calc(var(--r) - 4px)}
+
+/* ---------- how long to play: chips on the hand-off / first screen ---------- */
+.pick{display:flex;flex-direction:column;gap:6px;width:100%}
+.pick-lbl{font:800 12px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.pick-row{padding:0;margin:0;gap:6px}
+.pick-row .chip{min-height:44px}
+.stepper{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:4px}
+.stepper .sv{min-width:84px;text-align:center;font:var(--fdw) 24px var(--fd);font-variant-numeric:tabular-nums}
+.handoff .pick{max-width:420px;align-items:center;text-align:center;margin:-2px 0 8px}
+.handoff .pick-row{justify-content:center}
+/* Forbidden Words: the crossed-out words, big enough to read at a glance */
+.banned span{font-size:clamp(19px,5.4vw,24px);line-height:1.15;padding:9px 12px}
+@media (min-width:700px) and (min-height:600px){.banned span{font-size:28px;padding:11px 14px}}
+@media (max-height:700px){.banned span{font-size:19px;padding:6px 10px}}

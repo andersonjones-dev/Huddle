@@ -178,4 +178,19 @@ test('every DJNC Songbook title is in Hum That Tune on the Bible side', function
   assert.ok(!H.pool({ songs: true }).some(function (x) { return x.pack === 'djnc'; }));
   H.setMode('bible');
 });
+test('each game keeps its own round length, within 15 s to 10 min', function () {
+  S.time = 60; S.times = {};
+  assert.strictEqual(H.roundTime('hum'), 60);              // starts from the Settings value
+  S.times.hum = 120; assert.strictEqual(H.roundTime('hum'), 120);
+  assert.strictEqual(H.roundTime('act'), 60);              // other games unaffected
+  S.times.act = 5; assert.strictEqual(H.roundTime('act'), 60);    // out of range falls back
+  assert.strictEqual(H.fmt(45), '45'); assert.strictEqual(H.fmt(90), '1:30'); assert.strictEqual(H.fmt(600), '10:00');
+});
+test('play counts and bomb timer have safe defaults', function () {
+  S.counts = {}; assert.strictEqual(H.playCount('likely'), 0);   // no limit, as before
+  S.counts.verse = 10; assert.strictEqual(H.playCount('verse'), 10);
+  S.fuse = 'short'; var r = H.fuseRange(); assert.ok(r[0] < r[1] && r[1] <= 20000);
+  S.fuse = 'nonsense'; assert.deepStrictEqual(H.fuseRange(), [15000, 45000]);
+  S.fuse = 'medium';
+});
 console.log('\n' + n + ' tests passed');

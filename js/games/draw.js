@@ -15,14 +15,14 @@
       var g = H.games.draw, deck = H.deck(H.pool()), cur = null;
       function next() {
         var tr = H.turn();
-        H.handTurn(view, tr, t('drawer'), t('drawNote'), function () { play(tr); });
+        H.handTurn(view, tr, t('drawer'), t('drawNote'), function () { play(tr); }, null, 'draw');
       }
       function play(tr) {
         cur = deck.next(cur);
-        var drew = false, ink = INKS[0], size = 6, strokes = [], live = null, cd = null;
+        var drew = false, ink = INKS[0], size = 6, strokes = [], live = null, cd = null, T = H.roundTime('draw');
         H.wake(true);
         view.innerHTML = H.bar(H.gname(g), tr.team >= 0 ? H.teamName(tr.team) + (tr.player ? ' · ' + tr.player.name : '') : '') +
-          '<div class="meta"><span class="timer" id="tm">' + S.time + '</span><button class="btn b2 sm peek" type="button" id="peek">' + esc(t('holdToPeek')) + '</button></div>' +
+          '<div class="meta"><span class="timer" id="tm">' + H.fmt(T) + '</span><button class="btn b2 sm peek" type="button" id="peek">' + esc(t('holdToPeek')) + '</button></div>' +
           '<div class="bar"><i id="tb" style="width:100%"></i></div>' +
           '<canvas class="pad" id="pad" aria-label="' + esc(t('drawHere')) + '"></canvas>' +
           '<div class="tools">' + INKS.map(function (c, i) { return '<button class="sw" type="button" data-ink="' + c + '" style="background:' + c + '" aria-label="Colour ' + (i + 1) + '" aria-pressed="' + (i === 0) + '"></button>'; }).join('') +
@@ -63,7 +63,7 @@
         }
         $('#got', view).onclick = function () { end(true); };
         $('#giveup', view).onclick = function () { end(false); };
-        cd = H.countdown(S.time, function (l) { $('#tm', view).textContent = l; $('#tb', view).style.width = (l / S.time * 100) + '%'; }, function () { end(false); });
+        cd = H.countdown(T, function (l) { $('#tm', view).textContent = H.fmt(l); $('#tb', view).style.width = (l / T * 100) + '%'; }, function () { end(false); });
       }
       H.withTeams(view, g, next);
     }

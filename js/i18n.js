@@ -83,6 +83,7 @@
     playNext: 'Play', skipGame: 'Skip this game', endNight: 'End the night', pickGames: 'Pick tonight’s games', moveUp: 'Move up',
     appearance: 'Appearance', appearanceSub: 'Light or dark, for Illustrated & Playful', light: 'Light', dark: 'Dark', matchPhone: 'Match phone',
     sideBible: 'Bible', sideEveryday: 'Everyday', sideLabel: 'Content', sideBibleOn: 'Bible content on', sideEverydayOn: 'Everyday content on: no Bible or church words', sideNote: 'Switch to Everyday on the main screen for the other packs', sideNoteB: 'Switch to Bible on the main screen for the other packs',
+    howMany: 'How many to play', unlimited: 'No limit', bombTimer: 'Bomb timer', fuse_short: 'Short', fuse_medium: 'Medium', fuse_long: 'Long', fuse_random: 'Surprise', custom: 'Custom', min: 'min',
     surprise: 'Surprise order', startNight: 'Start the night', nightNote: 'Points from every game add up on one scoreboard.', finalResults: 'Final results'
   };
   var KN2 = {
@@ -122,6 +123,7 @@
     playNext: 'ಆಡಿ', skipGame: 'ಈ ಆಟ ಬಿಡಿ', endNight: 'ರಾತ್ರಿ ಮುಗಿಸಿ', pickGames: 'ಇಂದಿನ ಆಟಗಳನ್ನು ಆರಿಸಿ', moveUp: 'ಮೇಲೆ ಸರಿಸಿ',
     appearance: 'ನೋಟದ ಬಣ್ಣ', appearanceSub: 'ಬೆಳಕು ಅಥವಾ ಕತ್ತಲು (ಚಿತ್ರಮಯ ನೋಟಕ್ಕೆ)', light: 'ಬೆಳಕು', dark: 'ಕತ್ತಲು', matchPhone: 'ಫೋನಿನಂತೆ',
     sideBible: 'ಬೈಬಲ್', sideEveryday: 'ದಿನನಿತ್ಯ', sideLabel: 'ವಿಷಯ', sideBibleOn: 'ಬೈಬಲ್ ವಿಷಯ ಆನ್', sideEverydayOn: 'ದಿನನಿತ್ಯ ವಿಷಯ ಆನ್: ಬೈಬಲ್ ಅಥವಾ ಸಭೆಯ ಪದಗಳಿಲ್ಲ', sideNote: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ದಿನನಿತ್ಯ ಆರಿಸಿ', sideNoteB: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ಬೈಬಲ್ ಆರಿಸಿ',
+    howMany: 'ಎಷ್ಟು ಆಡಬೇಕು', unlimited: 'ಮಿತಿಯಿಲ್ಲ', bombTimer: 'ಬಾಂಬ್ ಸಮಯ', fuse_short: 'ಕಡಿಮೆ', fuse_medium: 'ಮಧ್ಯಮ', fuse_long: 'ದೀರ್ಘ', fuse_random: 'ಅಚ್ಚರಿ', custom: 'ಬೇಕಾದಷ್ಟು', min: 'ನಿಮಿಷ',
     surprise: 'ಅಚ್ಚರಿಯ ಕ್ರಮ', startNight: 'ರಾತ್ರಿ ಆರಂಭಿಸಿ', nightNote: 'ಎಲ್ಲಾ ಆಟಗಳ ಅಂಕಗಳು ಒಂದೇ ಅಂಕಪಟ್ಟಿಗೆ ಸೇರುತ್ತವೆ.', finalResults: 'ಅಂತಿಮ ಫಲಿತಾಂಶ'
   };
   Object.keys(EN2).forEach(function (k) { EN[k] = EN2[k]; });

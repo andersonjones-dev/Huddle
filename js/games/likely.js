@@ -15,12 +15,16 @@
       if (S.players.length < 3) { H.needSetup(view, g, t('needThree')); return; }
       var deck = H.deck(H.list('LIKELY')), cur = null, total = {}, rounds = 0;
       S.players.forEach(function (p) { total[p.id] = 0; });
+      var limit = H.playCount('likely');
       function ask() {
+        if (limit && rounds >= limit) { results(); return; }
         cur = deck.next(cur);
-        view.innerHTML = H.bar(H.gname(g), t('round') + ' ' + (rounds + 1)) +
+        view.innerHTML = H.bar(H.gname(g), t('round') + ' ' + (rounds + 1) + (limit ? ' / ' + limit : '')) +
+          (rounds === 0 ? '<div class="card">' + H.pickerHTML('count', 'likely') + '</div>' : '') +
           '<div class="card center"><div class="sec">' + esc(t('whoLikely')) + '</div><p class="prompt">' + esc(cur.w) + '</p></div>' +
           '<div id="zone" class="center"><button class="btn big" type="button" id="cnt">' + esc(t('countIn')) + '</button></div>';
-        $('#cnt', view).onclick = count;
+        if (rounds === 0) H.bindPicker(view, 'likely');
+        $('#cnt', view).onclick = function () { limit = H.playCount('likely'); var pk = $('.pick', view); if (pk) pk.parentNode.remove(); count(); };
       }
       function count() {
         var z = $('#zone', view), n = 3;

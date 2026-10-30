@@ -7,7 +7,7 @@
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$;
 
   function quiz(view, g, deck, render, reveal, learnOf) {
-    var cur = null, n = 0;
+    var cur = null, n = 0, limit = H.playCount(g.id);
     function award() {
       if (H.isQuick()) return '<div class="row"><button class="btn" type="button" id="nxq">' + esc(t('nextQ')) + ' ›</button></div>';
       var b = '';
@@ -15,12 +15,16 @@
       return '<div class="sec center" style="margin:0">' + esc(t('whoWins')) + '</div><div class="award">' + b + '</div><button class="btn alt" type="button" data-t="-1">' + esc(t('nobody')) + '</button>';
     }
     function ask() {
+      if (limit && n >= limit) { H.go('done', { g: g }); return; }
       cur = deck.next(cur); n++;
-      view.innerHTML = H.bar(H.gname(g), t('question') + ' ' + n + ' · ' + t('hostReads')) +
+      view.innerHTML = H.bar(H.gname(g), t('question') + ' ' + n + (limit ? ' / ' + limit : '') + ' · ' + t('hostReads')) +
+        (n === 1 ? '<div class="card">' + H.pickerHTML('count', g.id) + '</div>' : '') +
         '<div class="card stack">' + render(cur) + '</div>' +
         '<div id="ans"><button class="btn b2" type="button" id="show">' + esc(t('showAnswer')) + '</button></div>' +
         '<button class="link" type="button" id="fin">' + esc(t('finish')) + '</button>';
+      if (n === 1) H.bindPicker(view, g.id);
       $('#show', view).onclick = function () {
+        if (n === 1) { limit = H.playCount(g.id); var pk = $('.pick', view); if (pk) pk.parentNode.remove(); }
         reveal(cur); H.sfx('good'); H.haptic(20);
         var a = $('#ans', view); a.className = 'stack'; a.innerHTML = (learnOf ? H.learnHTML([learnOf(cur)]) : '') + award();
         H.$$('[data-t]', a).forEach(function (b) { b.onclick = function () { var k = +b.dataset.t; if (k >= 0) { H.addPoints(k, 1, g.id); H.toast('+1 ' + H.teamName(k)); H.sfx('win'); } ask(); }; });

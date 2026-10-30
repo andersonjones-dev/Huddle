@@ -42,7 +42,7 @@
       while (slices.length < 6) slices = slices.concat(H.shuffle(S.players.slice()));
       slices = slices.slice(0, Math.max(6, Math.min(16, S.players.length)));
       var W = { a: Math.random() * 360, v: 0, raf: 0, last: 0, n: slices.length, seg: 360 / slices.length, lastSeg: null, drag: null };
-      var spinning = false;
+      var spinning = false, spins = 0, limit = H.playCount('spin');
       H.onLeave(function () { cancelAnimationFrame(W.raf); });
 
       view.innerHTML = H.bar(H.gname(g), t('flickSub')) +
@@ -51,7 +51,9 @@
         '<div class="card spinres" id="sres"><div class="sub" id="swho">' + esc(t('whoWillItBe')) + '</div><div class="who" id="sname"></div><div style="font-weight:800" id="sch"></div></div>' +
         '<div class="row" id="after" hidden><button class="btn alt" type="button" id="skip">' + esc(t('skip')) + '</button><button class="btn b4" type="button" id="did">' + H.svg('check') + esc(t('didIt')) + '</button></div>' +
         '<button class="btn big" type="button" id="spinb">' + esc(t('spin')) + '</button>' +
+        '<div class="card" id="spinpick">' + H.pickerHTML('count', 'spin') + '</div>' +
         (S.night ? H.endButtons('spin') : '<button class="link" type="button" data-back>' + esc(t('finish')) + '</button>');
+      H.bindPicker(view, 'spin');
       var wh = $('#wheel', view), box = $('#wbox', view), btn = $('#spinb', view), flap = $('#flap', view);
       var landed = null;
 
@@ -100,11 +102,16 @@
         $('#sname', view).textContent = landed.name; $('#sname', view).style.color = landed.color;
         $('#sch', view).textContent = ch.w;
         $('#after', view).hidden = false;
+        spins++;
+        if (limit && spins >= limit) { btn.textContent = t('finish'); btn.onclick = function () { H.go('done', { g: g }); }; }
+        else if (limit) btn.textContent = t('spinAgain') + ' (' + spins + '/' + limit + ')';
         H.haptic([40, 60, 120]); H.sfx('win');
         box.dataset.landed = String(i);   // used by the automatic checks
       }
       function start(v) {
         if (spinning) return;
+        if (limit && spins >= limit) return;
+        if (spins === 0) { limit = H.playCount('spin'); var pk = $('#spinpick', view); if (pk) pk.remove(); }
         spinning = true; btn.disabled = true; btn.textContent = t('spinning');
         $('#whi', view).style.opacity = 0; box.classList.remove('landed'); $('#after', view).hidden = true;
         $('#swho', view).textContent = t('spinning'); $('#sname', view).textContent = ''; $('#sch', view).textContent = '';

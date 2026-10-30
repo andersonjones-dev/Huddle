@@ -36,9 +36,19 @@
   };
 
   /* Hand-off to the next team's player */
-  H.handTurn = function (view, tr, role, note, then, button) {
-    if (tr.team < 0 || !tr.player) { then(); return; }
-    H.handoff(view, { name: tr.player.name, color: H.teamColor(tr.team), team: H.teamName(tr.team), role: role, note: note, then: then, button: button });
+  // gid: show the round-length chips for this game on the hand-off screen
+  H.handTurn = function (view, tr, role, note, then, button, gid) {
+    if (tr.team < 0 || !tr.player) {
+      if (!gid) { then(); return; }
+      // Just play (no names): a short "ready" screen so the round length can still be chosen
+      var g = H.games[gid];
+      view.innerHTML = H.bar(H.gname(g), H.gdesc(g)) + '<div class="card stack">' + H.pickerHTML('time', gid) + '</div>' +
+        '<button class="btn big" type="button" id="hoGo">' + esc(button || t('start')) + '</button>';
+      H.bindPicker(view, gid);
+      $('#hoGo', view).onclick = function () { H.audioOn(); then(); };
+      return;
+    }
+    H.handoff(view, { name: tr.player.name, color: H.teamColor(tr.team), team: H.teamName(tr.team), role: role, note: note, then: then, button: button, pick: gid ? 'time' : '', gid: gid });
   };
 
   /* ---------- results after a timed round ----------
@@ -72,13 +82,13 @@
     var g = cfg.g;
     function next() {
       var tr = H.turn();
-      H.handTurn(view, tr, cfg.role, cfg.note, function () { play(tr); });
+      H.handTurn(view, tr, cfg.role, cfg.note, function () { play(tr); }, null, g.id);
     }
     function play(tr) {
-      var items = [], cur = null, clues = 1, left = S.time;
+      var items = [], cur = null, clues = 1, T = H.roundTime(g.id), left = T;
       H.wake(true);
       view.innerHTML = H.bar(H.gname(g), tr.team >= 0 ? H.teamName(tr.team) + (tr.player ? ' · ' + tr.player.name : '') : '') +
-        '<div class="meta"><span class="timer" id="tm">' + S.time + '</span><span class="counter"><span class="g">✓ <b id="ng">0</b></span><span class="p">↷ <b id="np">0</b></span></span></div>' +
+        '<div class="meta"><span class="timer" id="tm">' + H.fmt(T) + '</span><span class="counter"><span class="g">✓ <b id="ng">0</b></span><span class="p">↷ <b id="np">0</b></span></span></div>' +
         '<div class="bar"><i id="tb" style="width:100%"></i></div>' +
         '<div class="word" id="card"></div>' +
         (cfg.oneWord ? '<div class="row"><button class="btn alt" type="button" id="clue">' + esc(t('clue')) + ' <b id="nc">1</b></button></div>' : '') +
@@ -101,7 +111,7 @@
       function end() { cd.stop(); H.wake(false); H.roundResults(view, { g: g, tr: tr, items: items, again: next }); }
       $('#stop', view).onclick = end;
       deal();
-      cd = H.countdown(S.time, function (l) { left = l; $('#tm', view).textContent = l; $('#tb', view).style.width = (l / S.time * 100) + '%'; }, end);
+      cd = H.countdown(T, function (l) { left = l; $('#tm', view).textContent = H.fmt(l); $('#tb', view).style.width = (l / T * 100) + '%'; }, end);
     }
     next();
   };

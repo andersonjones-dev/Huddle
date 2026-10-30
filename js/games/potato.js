@@ -23,13 +23,15 @@
         view.innerHTML = H.bar(H.gname(g), H.gdesc(g)) +
           '<div class="card center stack"><p style="margin:0">' + esc(t('potatoHow')) + '</p>' +
           (named ? '<div class="pl" style="justify-content:center">' + alive().map(function (p) { return '<span class="pchip"><i style="background:' + p.color + '">' + esc(p.name[0]) + '</i><span>' + esc(p.name) + '</span> <span class="lives">' + heart(lives[p.id]) + '</span></span>'; }).join('') + '</div>' : '<p class="hint">' + esc(t('potatoNoNames')) + '</p>') + '</div>' +
+          '<div class="card">' + H.pickerHTML('fuse', 'potato') + '</div>' +
           '<button class="btn big" type="button" id="go">' + esc(t('start')) + '</button>';
+        H.bindPicker(view, 'potato');
         $('#go', view).onclick = round;
       }
       function round() {
         cat = deck.next(cat);
         H.wake(true);
-        var fuse = 15000 + Math.random() * 30000, t0 = Date.now(), beat = 0, nextBeat = 0;
+        var fr = H.fuseRange(), fuse = fr[0] + Math.random() * (fr[1] - fr[0]), t0 = Date.now(), beat = 0, nextBeat = 0;
         view.innerHTML = H.bar(H.gname(g), '') +
           '<div class="card center"><div class="sec">' + esc(t('category')) + '</div><div class="cat" id="cat">' + esc(cat.w) + '</div></div>' +
           '<div class="potato"><div class="bomb tick" id="bomb"></div></div>' +

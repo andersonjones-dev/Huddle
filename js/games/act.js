@@ -53,7 +53,7 @@
       H.onLeave(function () { if (layer) layer.remove(); layer = null; });
       function next() {
         var tr = H.turn();
-        H.handTurn(view, tr, t('guesser'), t('actNote'), function () { begin(tr); }, t('tapWhenReady'));
+        H.handTurn(view, tr, t('guesser'), t('actNote'), function () { begin(tr); }, t('tapWhenReady'), 'act');
         if (tr.team < 0) return;
       }
       function begin(tr) {
@@ -62,11 +62,11 @@
       }
       function play(tr, tiltOk) {
         H.wake(true);
-        var items = [], cur = null, busy = false, watcher = null, cd = null;
+        var items = [], cur = null, busy = false, watcher = null, cd = null, T = H.roundTime('act');
         layer = document.createElement('div');
         layer.className = 'act';
         layer.innerHTML = '<div class="atop"><button class="x" type="button" id="ax" aria-label="' + esc(t('endRound')) + '">' + H.svg('x', 20) + '</button>' +
-          '<span id="acount">✓ 0</span><span class="timer" id="atm">' + S.time + '</span></div>' +
+          '<span id="acount">✓ 0</span><span class="timer" id="atm">' + H.fmt(T) + '</span></div>' +
           '<div class="aw"><div><div class="big" id="aword"></div><p id="anote" style="margin:10px 0 0;font-weight:700;opacity:.85"></p></div></div>' +
           '<div class="abtns"><button type="button" id="apass">' + H.svg('up', 20) + ' ' + esc(t('pass')) + '</button><button type="button" id="agot">' + H.svg('down', 20) + ' ' + esc(t('got')) + '</button></div>';
         $('#app').appendChild(layer);
@@ -98,7 +98,7 @@
           if (n > 0) { word.textContent = n; H.sfx('beep'); H.haptic(10); return; }
           clearInterval(c); busy = false; deal(); H.sfx('good');
           if (tiltOk) watcher = tiltWatch(function (k) { mark(k === 'got'); });
-          cd = H.countdown(S.time, function (l) { var e = $('#atm', layer); if (e) e.textContent = l; }, end);
+          cd = H.countdown(T, function (l) { var e = $('#atm', layer); if (e) e.textContent = H.fmt(l); }, end);
         }, 900);
         H.sfx('beep');
       }
