@@ -19,7 +19,7 @@ Bible and everyday word packs, in English and ಕನ್ನಡ. Works offline onc
 Also: players and teams (random or choose yourself), one scoreboard for the night,
 Party Night (a running order of games with standings and a podium), Kids mode,
 Learn More cards with Bible references, your own word packs shared by link, WhatsApp or QR code,
-four looks (Illustrated & Playful, Pop Art Comic, Arcade Night, Graffiti; the first two follow the phone’s light/dark setting) and layouts for phones, iPads and Android tablets.
+a Bible / Everyday content switch on the main screen (no overlap between the two), four looks (Illustrated & Playful with Light, Dark or Match phone; Comic Splash; Arcade Night; Graffiti) and layouts for phones, iPads and Android tablets.
 
 ## Files
 

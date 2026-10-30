@@ -14,7 +14,7 @@
   /* ---------------- saved state ---------------- */
   function fresh() {
     return {
-      v: 1, lang: 'en', theme: 'playful', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
+      v: 1, lang: 'en', theme: 'playful', appear: 'light', mode: 'bible', kids: false, sound: true, haptic: true, learn: true, tilt: true, time: 60,
       players: [], teams: { count: 2, mode: 'random', names: TEAM_NAMES.slice(), of: {} },
       packsOn: {}, custom: [],
       night: null,          // { plan: [gameIds], i: 0 }
@@ -27,7 +27,7 @@
     var f = fresh();
     if (!s || typeof s !== 'object') return f;
     Object.keys(f).forEach(function (k) { if (s[k] === undefined) s[k] = f[k]; });
-    if (s.theme === 'comic') s.theme = 'popart';   // Comic Splash was replaced by Pop Art Comic
+    if (s.theme === 'popart') s.theme = 'comic';   // Pop Art Comic was tried and removed
     if (!Array.isArray(s.players)) s.players = [];
     if (!s.teams || typeof s.teams !== 'object') s.teams = f.teams;
     s.teams.count = Math.max(2, Math.min(4, s.teams.count | 0 || 2));
@@ -125,26 +125,36 @@
   }
   function resetScore() { S.score = { pts: [0, 0, 0, 0], log: [] }; save(); }
 
-  /* ---------------- word pools ---------------- */
+  /* ---------------- word pools ----------------
+     Content side (S.mode): 'bible' = Christian content only, 'everyday' = no Bible or church content.
+     Built-in packs and prompts belong to exactly one side. Your own packs show on both. */
+  function mode() { return S.mode === 'everyday' ? 'everyday' : 'bible'; }
+  function setMode(m) { S.mode = m === 'everyday' ? 'everyday' : 'bible'; save(); }
   function allPacks() { return D.PACKS.concat(S.custom.map(function (c) { return { id: c.id, name: c.name, kn: c.name, en: c.name, lang: c.lang || 'en', custom: true, on: true, items: c.words.map(function (w) { return { w: w, ref: '', fact: '', kid: true, pack: c.id }; }) }; })); }
+  function sidePacks() { return allPacks().filter(function (p) { return p.custom || p.mode === mode(); }); }
   // Kannada packs start on only when the app is in Kannada; a pack you switch on or off stays that way
   function packOn(p) { var v = S.packsOn[p.id]; if (v != null) return !!v; if (p.lang === 'kn' && !p.custom) return S.lang === 'kn'; return p.on !== false; }
   function pool(opts) {
     opts = opts || {};
     var out = [];
-    allPacks().forEach(function (p) {
+    sidePacks().forEach(function (p) {
       if (!packOn(p)) return;
       if (opts.songs ? !p.songs : p.songs) return;
       out = out.concat(p.items);
     });
     if (S.kids) out = out.filter(function (x) { return x.kid; });
-    if (!out.length && !opts.songs) {   // every pack switched off: fall back to the Bible stories
-      out = D.PACKS[1].items.filter(function (x) { return !S.kids || x.kid; });
+    if (!out.length) {   // every pack switched off: fall back to this side's first pack
+      var first = D.PACKS.filter(function (p) { return p.mode === mode() && !!p.songs === !!opts.songs; })[0];
+      out = first.items.filter(function (x) { return !S.kids || x.kid; });
     }
     return out;
   }
   function wordLang() { return S.lang === 'kn' ? 'kn' : 'en'; }
-  function list(name) { return D[name].filter(function (x) { return !S.kids || x.kid; }); }
+  // Prompts for this side. Fill the Verse becomes Fill the Phrase (sayings) on the Everyday side.
+  function list(name) {
+    if (name === 'VERSES' && mode() === 'everyday') name = 'SAYINGS';
+    return D[name].filter(function (x) { return x.mode === mode() && (!S.kids || x.kid) && (!x.lang || x.lang === 'en' || S.lang === 'kn'); });
+  }
 
   /* ---------------- sound & vibration ----------------
      Android: navigator.vibrate. iPhone: Safari has no vibrate, so a hidden
@@ -304,8 +314,11 @@
     sfx: sfx, audioOn: audioOn, haptic: haptic, wake: wake, later: later, every: every, countdown: countdown, stopTimers: stopTimers,
     toast: toast, onLeave: onLeave, route: route, game: game, games: games, ORDER: ORDER, go: go, bar: bar, handoff: handoff, learnHTML: learnHTML,
     endButtons: endButtons, confetti: confetti, TEAM_COLORS: TEAM_COLORS,
-    gname: function (g) { return S.lang === 'kn' && I.gamesKn[g.id] ? I.gamesKn[g.id][0] : g.name; },
-    gdesc: function (g) { return S.lang === 'kn' && I.gamesKn[g.id] ? I.gamesKn[g.id][1] : g.desc; },
+    // a game can have its own name and description on the Everyday side (g.everyday = {name, desc, how})
+    gname: function (g) { var e = mode() === 'everyday' && g.everyday; if (S.lang === 'kn') { var k = e ? I.gamesKn[g.id + 'E'] : I.gamesKn[g.id]; if (k) return k[0]; } return e ? e.name : g.name; },
+    gdesc: function (g) { var e = mode() === 'everyday' && g.everyday; if (S.lang === 'kn') { var k = e ? I.gamesKn[g.id + 'E'] : I.gamesKn[g.id]; if (k) return k[1]; } return e ? e.desc : g.desc; },
+    ghow: function (g) { var e = mode() === 'everyday' && g.everyday; return e ? e.how : g.how; },
+    mode: mode, setMode: setMode, sidePacks: sidePacks,
     iconSet: iconSet, __test: { fresh: fresh, load: load }
   };
 })();

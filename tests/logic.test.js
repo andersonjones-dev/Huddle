@@ -6,7 +6,7 @@ global.localStorage = { getItem: function (k) { return store[k] || null; }, setI
 global.document = { addEventListener: function () {}, querySelector: function () { return null; }, hidden: false };
 try { global.navigator = {}; } catch (e) { /* Node 21+ has its own */ }
 global.window = global;
-['data', 'i18n', 'core', 'games/words', 'games/act', 'games/spin'].forEach(function (f) { require(path.join(__dirname, '..', 'js', f + '.js')); });
+['data', 'i18n', 'core', 'games/words', 'games/act', 'games/spin', 'games/quiz'].forEach(function (f) { require(path.join(__dirname, '..', 'js', f + '.js')); });
 var H = window.Huddle, S = H.S, n = 0;
 function test(name, fn) { fn(); n++; console.log('ok  ' + name); }
 
@@ -56,8 +56,8 @@ test('kids mode keeps only kid-friendly words', function () {
 test('Kannada packs come on with the Kannada interface; songs stay in Hum', function () {
   S.lang = 'en'; assert.ok(!H.pool().some(function (x) { return x.pack === 'knbible'; }));
   S.lang = 'kn'; assert.ok(H.pool().some(function (x) { return x.pack === 'knbible'; }));
-  assert.ok(!H.pool().some(function (x) { return x.pack === 'hum'; }));
-  assert.ok(H.pool({ songs: true }).every(function (x) { return x.pack === 'hum'; }));
+  assert.ok(!H.pool().some(function (x) { return x.pack === 'hymns'; }));
+  assert.ok(H.pool({ songs: true }).every(function (x) { return x.pack === 'hymns'; }));
   S.lang = 'en';
 });
 test('every pack switched off still leaves words to play', function () {
@@ -73,7 +73,7 @@ test('saved data from an older or broken copy still loads', function () {
   store['huddle.v1'] = '{"teams":{"count":9},"score":{}}';
   var s = H.__test.load(); assert.strictEqual(s.teams.count, 4); assert.strictEqual(s.score.pts.length, 4);
   store['huddle.v1'] = 'not json'; assert.strictEqual(H.__test.load().theme, 'playful');
-  store['huddle.v1'] = '{"theme":"comic"}'; assert.strictEqual(H.__test.load().theme, 'popart');   // Comic Splash moved to Pop Art
+  store['huddle.v1'] = '{"theme":"popart"}'; assert.strictEqual(H.__test.load().theme, 'comic');   // Pop Art Comic was removed
 });
 test('wheel: the slice under the pointer for any angle', function () {
   assert.strictEqual(H.wheelSegAt(0, 6), 0);
@@ -96,5 +96,61 @@ test('every Fill the Verse answer is part of its KJV text', function () {
 test('every interface text has a Kannada version', function () {
   var I = window.HuddleI18n, miss = Object.keys(I.en).filter(function (k) { return !I.kn[k] && k !== 'wordsEg'; });
   assert.deepStrictEqual(miss, []);
+});
+/* ---------- Bible / Everyday sides ---------- */
+function allText(side) {
+  var D = H.D, out = [];
+  D.PACKS.filter(function (p) { return p.mode === side; }).forEach(function (p) { p.items.forEach(function (x) { out.push(x.w); }); });
+  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES'].forEach(function (k) { D[k].filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.w); }); });
+  D.VERSES.concat(D.SAYINGS).filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.before + ' ' + x.word + x.after); });
+  D.ODDS.filter(function (x) { return x.mode === side; }).forEach(function (x) { out.push(x.words.slice().sort().join('/')); });
+  return out;
+}
+test('every built-in pack and prompt belongs to exactly one side', function () {
+  var D = H.D, bad = [];
+  D.PACKS.forEach(function (p) { if (p.mode !== 'bible' && p.mode !== 'everyday') bad.push(p.id); });
+  ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES', 'VERSES', 'SAYINGS', 'ODDS'].forEach(function (k) { D[k].forEach(function (x) { if (x.mode !== 'bible' && x.mode !== 'everyday') bad.push(k + ':' + (x.w || x.word)); }); });
+  assert.deepStrictEqual(bad, []);
+});
+test('no content appears on both sides', function () {
+  var norm = function (w) { return String(w).toLowerCase().replace(/[^a-z0-9ಀ-೿]+/g, ' ').trim(); };
+  var b = {}; allText('bible').forEach(function (w) { b[norm(w)] = w; });
+  var both = allText('everyday').filter(function (w) { return b[norm(w)]; });
+  assert.deepStrictEqual(both, []);
+});
+test('the Everyday side has no Bible or church words', function () {
+  var re = /\b(bible|church|jesus|christ|god|lord|pray\w*|hymn\w*|worship|pastor|sermon|angel\w*|christmas|easter|noah|moses|david|goliath|amen|psalm|verse|gospel|disciple\w*|heaven|sunday school|choir|baptis\w*|manger|bethlehem|saviour|scripture|nativity)\b/i;
+  var hits = allText('everyday').filter(function (w) { return re.test(w); });
+  assert.deepStrictEqual(hits, []);
+});
+test('both sides are well stocked', function () {
+  [['bible', 300], ['everyday', 300]].forEach(function (x) { assert.ok(allText(x[0]).length >= x[1], x[0] + ' has ' + allText(x[0]).length); });
+  ['bible', 'everyday'].forEach(function (m) {
+    S.mode = m;
+    ['FORBID', 'CATS', 'LIKELY', 'CHALLENGES', 'ODDS', 'VERSES'].forEach(function (k) { assert.ok(H.list(k).length >= 20, m + ' ' + k + ' ' + H.list(k).length); });
+    assert.ok(H.pool({ songs: true }).length >= 25, m + ' songs');
+  });
+  S.mode = 'bible';
+});
+test('the switch changes every pool, and only shows that side', function () {
+  S.lang = 'en'; S.kids = false;
+  H.setMode('everyday');
+  assert.ok(H.pool().every(function (x) { return x.mode === 'everyday'; }));
+  assert.ok(H.list('VERSES').every(function (x) { return x.ref === 'Saying'; }));   // becomes Fill the Phrase
+  assert.ok(H.sidePacks().every(function (p) { return p.custom || p.mode === 'everyday'; }));
+  assert.strictEqual(H.gname(H.games.verse), 'Fill the Phrase');
+  H.setMode('bible');
+  assert.ok(H.pool().every(function (x) { return x.mode === 'bible'; }));
+  assert.ok(H.list('CHALLENGES').every(function (x) { return x.mode === 'bible'; }));
+  assert.strictEqual(H.gname(H.games.verse), 'Fill the Verse');
+});
+test('Kannada sayings appear only when the app is in Kannada', function () {
+  H.setMode('everyday'); S.lang = 'en';
+  assert.ok(!H.list('VERSES').some(function (x) { return x.lang === 'kn'; }));
+  S.lang = 'kn'; assert.ok(H.list('VERSES').some(function (x) { return x.lang === 'kn'; }));
+  S.lang = 'en'; H.setMode('bible');
+});
+test('kid-friendly words are marked without leaking the k into facts', function () {
+  assert.ok(H.D.PACKS.every(function (p) { return p.items.every(function (x) { return x.fact !== 'k' && x.ref !== 'k'; }); }));
 });
 console.log('\n' + n + ' tests passed');

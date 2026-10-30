@@ -1,6 +1,6 @@
 /*
  * HUDDLE — quick-fire quiz games read out by a host:
- * Fill the Verse (KJV) and Odd One Out. Teams shout; the host awards the point.
+ * Fill the Verse (KJV) — Fill the Phrase on the Everyday side — and Odd One Out. Teams shout; the host awards the point.
  */
 (function () {
   'use strict';
@@ -34,12 +34,13 @@
   H.game({
     id: 'verse', name: 'Fill the Verse', kind: 'quick', tag: 'onePhone', team: true,
     desc: 'Finish the Bible verse. Teams race to answer.',
+    everyday: { name: 'Fill the Phrase', desc: 'Finish the famous saying. Teams race to answer.', how: 'The host reads the saying out. First team to shout the missing word gets the point.' },
     how: 'The host reads the verse out. First team to shout the missing word gets the point.',
     start: function (view) {
       var g = H.games.verse, deck = H.deck(H.list('VERSES'));
       H.withTeams(view, g, function () {
         quiz(view, g, deck, function (v) {
-          return '<p class="verse">' + esc(v.before) + ' <span class="blank" id="vb">&nbsp;</span>' + esc(v.after) + '</p><div class="center"><span class="ref">' + esc(v.ref) + ' · KJV</span></div>';
+          return '<p class="verse">' + esc(v.before) + ' <span class="blank" id="vb">&nbsp;</span>' + esc(v.after) + '</p><div class="center"><span class="ref">' + esc(v.ref) + (v.mode === 'bible' ? ' · KJV' : '') + '</span></div>';
         }, function (v) { $('#vb', view).textContent = v.word; },
         null);
       });

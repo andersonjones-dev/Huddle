@@ -9,10 +9,9 @@
   var ORDER = ['act', 'forbid', 'one', 'draw', 'hum', 'potato', 'likely', 'spin', 'verse', 'odd'];
   // [id, name, swatch, light theme-color, dark theme-color (looks that follow the phone's dark mode)]
   var THEMES = [['playful', 'Illustrated & Playful', 'linear-gradient(135deg,#DDF1FF 50%,#FFC93C 50%)', '#DDF1FF', '#1A1838'],
-    ['popart', 'Pop Art Comic', 'radial-gradient(circle,#111 1.5px,transparent 2px) 0 0/6px 6px,linear-gradient(135deg,#FFE45E 50%,#E8222E 50%)', '#FFE45E', '#1A1A1A'],
+    ['comic', 'Comic Splash', 'linear-gradient(135deg,#ffd400 50%,#ff2e2e 50%)', '#fff7c7'],
     ['arcade', 'Arcade Night', 'linear-gradient(135deg,#2b2ce0,#ff2bd6)', '#0d0b24'],
     ['graffiti', 'Graffiti', 'linear-gradient(135deg,#ff2a6d,#d1f700,#05d9e8)', '#d9d6cf']];
-  var SFX = { act: 'SHH!', forbid: 'BZZT!', one: 'ONE!', draw: 'SKRITCH!', hum: 'HMMM!', potato: 'BOOM!', likely: 'YOU!', spin: 'WHIRR!', verse: 'AMEN!', odd: 'HUH?' };
   // Preview only: ?look=<id>&mode=light|dark shows a look without saving it.
   var QS = new URLSearchParams(location.search), LOOK = QS.get('look'), MODE = QS.get('mode');
   var darkMQ = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
@@ -27,12 +26,14 @@
     if (!THEMES.some(function (x) { return x[0] === S.theme; })) S.theme = 'playful';
     var look = THEMES.some(function (x) { return x[0] === LOOK; }) ? LOOK : S.theme;
     app.dataset.theme = look;
-    if (MODE === 'light' || MODE === 'dark') app.dataset.mode = MODE;
+    // Light / dark: the Appearance setting, or the phone's own setting when it's "Match phone"
+    var mode = (MODE === 'light' || MODE === 'dark') ? MODE : (S.appear === 'dark' || S.appear === 'light') ? S.appear : '';
+    if (mode) app.dataset.mode = mode; else delete app.dataset.mode;
     var set = H.iconSet();   // swap icons already on screen to this look's set
     $$('use').forEach(function (u) { var h = u.getAttribute('href') || ''; if (/^#[ip]-/.test(h) && h.charAt(1) !== set) u.setAttribute('href', '#' + set + h.slice(2)); });
     document.documentElement.lang = S.lang === 'kn' ? 'kn' : 'en';
     var th = THEMES.filter(function (x) { return x[0] === look; })[0];
-    var dark = MODE ? MODE === 'dark' : !!(darkMQ && darkMQ.matches);
+    var dark = mode ? mode === 'dark' : !!(darkMQ && darkMQ.matches);
     var c = (dark && th[4]) || th[3];
     if (c !== lastColor) {   // write theme-color only when it actually changes
       lastColor = c;
@@ -56,18 +57,25 @@
       '<button class="ib" type="button" data-go="players" aria-label="' + esc(t('playersTeams')) + '">' + svg('users') + '</button>' +
       '<button class="ib" type="button" data-go="settings" aria-label="' + esc(t('settings')) + '">' + svg('gear') + '</button></div>' +
       '<div class="hello"><span class="mascot" aria-hidden="true"></span><h2 class="h">' + esc(t('pickGame')) + '</h2><p class="sub"><button class="link" type="button" data-go="players" style="padding:2px 0">' + esc(who) + '</button> · <button class="link" type="button" data-go="packs" style="padding:2px 0">' + esc(packSummary()) + '</button>' + (S.kids ? ' · ' + esc(t('kids')) : '') + '</p></div>' +
+      '<div class="side" role="group" aria-label="' + esc(t('sideLabel')) + '"><span class="side-lbl">' + esc(t('sideLabel')) + '</span><span class="side-seg">' +
+        [['bible', 'cross', t('sideBible')], ['everyday', 'star', t('sideEveryday')]].map(function (x) { return '<button type="button" data-side="' + x[0] + '" aria-pressed="' + (H.mode() === x[0]) + '"><span class="mk mk-' + x[0] + '">' + svg(x[1], 14) + '</span>' + esc(x[2]) + '</button>'; }).join('') + '</span></div>' +
       '<button class="night" type="button" data-go="night"><span class="ic">' + svg('night', 26) + '</span><span class="grow"><b>' + esc(t('partyNight')) + '</b><small>' + esc(S.night ? t('nightOn') : t('partyNightSub')) + '</small></span>' + svg('back', 20).replace('class="i"', 'class="i" style="transform:rotate(180deg)"') + '</button>' +
       '<div class="chips" role="group" aria-label="' + esc(t('games')) + '">' + kinds.map(function (k) { return '<button class="chip" type="button" data-filter="' + k[0] + '" aria-pressed="' + (filter === k[0]) + '">' + esc(k[1]) + '</button>'; }).join('') + '</div>' +
       '<div class="grid">' + list.map(function (g) {
-        return '<button class="gc" type="button" data-sfx="' + (SFX[g.id] || '') + '" data-go="game:' + g.id + '"><span class="tag">' + esc(t(g.tag)) + '</span><span class="ic">' + svg(g.id, 26) + '</span><b>' + esc(H.gname(g)) + '</b><small>' + esc(H.gdesc(g)) + '</small></button>';
+        return '<button class="gc" type="button" data-go="game:' + g.id + '"><span class="tag">' + esc(t(g.tag)) + '</span><span class="ic">' + svg(g.id, 26) + '</span><b>' + esc(H.gname(g)) + '</b><small>' + esc(H.gdesc(g)) + '</small></button>';
       }).join('') + '</div>' +
       '<div class="row"><button class="btn alt" type="button" data-go="score">' + svg('trophy') + esc(t('score')) + '</button><button class="btn alt" type="button" data-go="packs">' + svg('pack') + esc(t('packs')) + '</button></div>' +
       '<div class="foot">' + (window.AppAbout ? AppAbout.linkHTML() : '') + '</div>';
     $$('[data-filter]', view).forEach(function (b) { b.onclick = function () { filter = b.dataset.filter; H.go('hub'); }; });
+    $$('[data-side]', view).forEach(function (b) { b.onclick = function () {
+      if (H.mode() === b.dataset.side) return;
+      H.setMode(b.dataset.side); H.haptic(15); H.sfx('tick', .6);
+      H.go('hub'); H.toast(t(H.mode() === 'bible' ? 'sideBibleOn' : 'sideEverydayOn'));
+    }; });
     $('#lang', view).onclick = function () { S.lang = S.lang === 'kn' ? 'en' : 'kn'; H.save(); applyLook(); H.go('hub'); };
   });
   function packSummary() {
-    var on = H.allPacks().filter(H.packOn);
+    var on = H.sidePacks().filter(H.packOn);
     var n = on.reduce(function (s, p) { return s + p.items.length; }, 0);
     return n + ' ' + t('wordsLc') + ' · ' + on.length + ' ' + t('packsLc');
   }
@@ -116,7 +124,7 @@
   H.route('packs', function (view) {
     route = 'packs';
     function draw() {
-      var packs = H.allPacks();
+      var packs = H.sidePacks();
       view.innerHTML = H.bar(t('packs'), t('packsSub')) +
         packs.map(function (p) {
           var on = H.packOn(p), name = S.lang === 'kn' ? p.kn : (p.en || p.name);
@@ -127,6 +135,7 @@
             (p.custom ? '<div class="row"><button class="btn alt sm" type="button" data-edit="' + p.id + '">' + esc(t('edit')) + '</button><button class="btn b2 sm" type="button" data-share="' + p.id + '">' + svg('share', 18) + esc(t('share')) + '</button></div>' : '') + '</div>';
         }).join('') +
         '<button class="btn" type="button" data-go="packedit">' + svg('plus') + esc(t('myPack')) + '</button>' +
+        '<p class="hint">' + esc(t(H.mode() === 'bible' ? 'sideNote' : 'sideNoteB')) + '</p>' +
         '<p class="hint">' + esc(t('kidsNote')) + '</p>';
       $$('[data-pk]', view).forEach(function (b) { b.onclick = function () { var p = H.allPacks().filter(function (x) { return x.id === b.dataset.pk; })[0]; S.packsOn[p.id] = !H.packOn(p); H.save(); b.setAttribute('aria-pressed', String(H.packOn(p))); H.haptic(8); }; });
       $$('[data-edit]', view).forEach(function (b) { b.onclick = function () { H.go('packedit', { id: b.dataset.edit }); }; });
@@ -229,6 +238,7 @@
     function tog(k, label, sub) { return '<div class="set"><span class="lbl"><b>' + esc(label) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span><button class="tog" type="button" data-set="' + k + '" aria-pressed="' + !!S[k] + '" aria-label="' + esc(label) + '"></button></div>'; }
     view.innerHTML = H.bar(t('settings'), '') +
       '<div class="card"><h2>' + esc(t('look')) + '</h2><div class="chips wrap">' + THEMES.map(function (x) { return '<button class="chip" type="button" data-theme-pick="' + x[0] + '" aria-pressed="' + (S.theme === x[0]) + '"><i style="width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;background:' + x[2] + '"></i>' + x[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div class="card"><div class="set"><span class="lbl"><b>' + esc(t('appearance')) + '</b><small>' + esc(t('appearanceSub')) + '</small></span><span class="seg">' + [['light', t('light')], ['dark', t('dark')], ['auto', t('matchPhone')]].map(function (m) { return '<button type="button" data-ap="' + m[0] + '" aria-pressed="' + ((S.appear || 'light') === m[0]) + '">' + esc(m[1]) + '</button>'; }).join('') + '</span></div></div>' +
       '<div class="card"><div class="set"><span class="lbl"><b>' + esc(t('language')) + '</b></span><span class="seg"><button type="button" data-lg="en" aria-pressed="' + (S.lang === 'en') + '">English</button><button type="button" data-lg="kn" aria-pressed="' + (S.lang === 'kn') + '">ಕನ್ನಡ</button></span></div>' +
       '<div class="set"><span class="lbl"><b>' + esc(t('roundTime')) + '</b></span><span class="seg">' + [30, 45, 60, 90].map(function (n) { return '<button type="button" data-tm="' + n + '" aria-pressed="' + (S.time === n) + '">' + n + '</button>'; }).join('') + '</span></div>' +
       tog('kids', t('kids'), t('kidsSub')) + tog('learn', t('learnCards'), t('learnCardsSub')) + tog('sound', t('sound')) + tog('haptic', t('haptics'), t('hapticsSub')) + tog('tilt', t('tilt'), t('tiltSub')) + '</div>' +
@@ -237,6 +247,7 @@
       '<div class="foot">' + (window.AppAbout ? AppAbout.linkHTML() : '') + '</div>';
     $$('[data-set]', view).forEach(function (b) { b.onclick = function () { var k = b.dataset.set; S[k] = !S[k]; H.save(); b.setAttribute('aria-pressed', String(S[k])); if (k === 'haptic' && S[k]) H.haptic(30); if (k === 'sound' && S[k]) H.sfx('good'); }; });
     $$('[data-theme-pick]', view).forEach(function (b) { b.onclick = function () { S.theme = b.dataset.themePick; H.save(); applyLook(); $$('[data-theme-pick]', view).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }; });
+    $$('[data-ap]', view).forEach(function (b) { b.onclick = function () { S.appear = b.dataset.ap; H.save(); applyLook(); $$('[data-ap]', view).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }; });
     $$('[data-lg]', view).forEach(function (b) { b.onclick = function () { S.lang = b.dataset.lg; H.save(); applyLook(); H.go('settings'); }; });
     $$('[data-tm]', view).forEach(function (b) { b.onclick = function () { S.time = +b.dataset.tm; H.save(); $$('[data-tm]', view).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }; });
     $('#feel', view).onclick = function () { H.sfx('tick', .8); H.haptic(30); };
@@ -285,7 +296,7 @@
     var g = H.games[N.plan[N.i]];
     view.innerHTML = H.bar(t('partyNight'), (N.i ? t('standings') : t('readyToStart'))) +
       (N.i ? standings() : '') +
-      '<div class="card center stack"><div class="sec" style="margin:0">' + esc(t('upNext')) + ' · ' + (N.i + 1) + '/' + N.plan.length + '</div><div class="ic" style="margin:0 auto;color:var(--a1)">' + svg(g.id, 48) + '</div><div class="big" style="font-size:34px">' + esc(H.gname(g)) + '</div><p class="mute" style="margin:0">' + esc(g.how || H.gdesc(g)) + '</p></div>' +
+      '<div class="card center stack"><div class="sec" style="margin:0">' + esc(t('upNext')) + ' · ' + (N.i + 1) + '/' + N.plan.length + '</div><div class="ic" style="margin:0 auto;color:var(--a1)">' + svg(g.id, 48) + '</div><div class="big" style="font-size:34px">' + esc(H.gname(g)) + '</div><p class="mute" style="margin:0">' + esc(H.ghow(g) || H.gdesc(g)) + '</p></div>' +
       '<button class="btn big" type="button" id="play">' + esc(t('playNext')) + ' ›</button>' +
       '<ol class="plan">' + N.plan.map(function (id, k) { return '<li class="' + (k < N.i ? 'done' : k === N.i ? 'now' : '') + '"><b>' + esc(H.gname(H.games[id])) + '</b>' + (k > N.i ? '<button type="button" data-skip="' + k + '" aria-label="' + esc(t('remove')) + '">' + svg('x', 16) + '</button>' : '') + '</li>'; }).join('') + '</ol>' +
       '<div class="row"><button class="btn alt" type="button" id="skipg">' + esc(t('skipGame')) + '</button><button class="btn alt" type="button" id="endn">' + esc(t('endNight')) + '</button></div>';

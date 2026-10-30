@@ -141,7 +141,6 @@
     how: 'The hummer holds the phone. No words, no lyrics, just hum.',
     start: function (view) {
       var g = H.games.hum, songs = H.pool({ songs: true });
-      if (!songs.length) songs = H.D.PACKS.filter(function (p) { return p.songs; })[0].items;
       var deck = H.deck(songs);
       H.withTeams(view, g, function () {
         H.timedGame(view, { g: g, deck: deck, role: t('hummer'), note: t('humNote'),

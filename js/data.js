@@ -4,6 +4,11 @@
  * Edit freely. Each word is "Word | Bible reference | one-line fact | k"
  *   - the reference and fact are optional (they show on Learn More cards)
  *   - a final "k" marks it kid-friendly (used by Kids mode)
+ *
+ * Two sides, switched on the main screen:
+ *   mode: 'bible'     Christian content only
+ *   mode: 'everyday'  no Bible or church content at all
+ * Nothing may appear on both sides (tests/logic.test.js checks this).
  * Scripture wording follows the King James Version (public domain).
  * Kannada words and Bible names use common spellings; please have a
  * Kannada speaker check them before sharing widely.
@@ -12,7 +17,7 @@
   'use strict';
 
   var PACKS = [
-    { id: 'bchar', name: 'Bible people', kn: 'ಬೈಬಲ್ ವ್ಯಕ್ತಿಗಳು', lang: 'en', on: true, words: [
+    { id: 'bchar', name: 'Bible people', kn: 'ಬೈಬಲ್ ವ್ಯಕ್ತಿಗಳು', lang: 'en', mode: 'bible', on: true, words: [
       'Adam|Genesis 2:7|The first man, formed from the dust of the ground.|k',
       'Eve|Genesis 3:20|Adam named her Eve, “the mother of all living”.|k',
       'Noah|Genesis 6:14|God told him to build an ark of gopher wood.|k',
@@ -77,7 +82,7 @@
       'Lydia|Acts 16:14|A seller of purple cloth from Thyatira.',
       'Silas|Acts 16:25|He sang hymns with Paul in prison at midnight.'
     ] },
-    { id: 'bstory', name: 'Bible stories', kn: 'ಬೈಬಲ್ ಕಥೆಗಳು', lang: 'en', on: true, words: [
+    { id: 'bstory', name: 'Bible stories', kn: 'ಬೈಬಲ್ ಕಥೆಗಳು', lang: 'en', mode: 'bible', on: true, words: [
       'Creation|Genesis 1:1|God made the heaven and the earth in six days.|k',
       'Noah’s ark|Genesis 7:9|The animals went in two by two.|k',
       'Tower of Babel|Genesis 11:9|God confused their language.|k',
@@ -120,7 +125,7 @@
       'Paul’s shipwreck|Acts 27:44|Everyone reached land safely.',
       'Peter freed from prison|Acts 12:7|An angel woke him and his chains fell off.'
     ] },
-    { id: 'bparable', name: 'Parables & miracles', kn: 'ಸಾಮ್ಯಗಳು ಮತ್ತು ಅದ್ಭುತಗಳು', lang: 'en', on: true, words: [
+    { id: 'bparable', name: 'Parables & miracles', kn: 'ಸಾಮ್ಯಗಳು ಮತ್ತು ಅದ್ಭುತಗಳು', lang: 'en', mode: 'bible', on: true, words: [
       'The good Samaritan|Luke 10:33|He stopped to help a wounded stranger.|k',
       'The prodigal son|Luke 15:20|His father ran to welcome him home.|k',
       'The lost sheep|Luke 15:4|The shepherd left the ninety and nine.|k',
@@ -143,7 +148,7 @@
       'The coin in the fish’s mouth|Matthew 17:27|Peter found tax money in a fish.|k',
       'Healing the centurion’s servant|Matthew 8:8|“Speak the word only, and my servant shall be healed.”'
     ] },
-    { id: 'bplace', name: 'Bible places & things', kn: 'ಸ್ಥಳಗಳು ಮತ್ತು ವಸ್ತುಗಳು', lang: 'en', on: true, words: [
+    { id: 'bplace', name: 'Bible places & things', kn: 'ಸ್ಥಳಗಳು ಮತ್ತು ವಸ್ತುಗಳು', lang: 'en', mode: 'bible', on: true, words: [
       'Garden of Eden|Genesis 2:8|God planted a garden eastward in Eden.|k',
       'Bethlehem|Micah 5:2|The town where Jesus was born.|k',
       'Nazareth|Luke 2:51|The town where Jesus grew up.|k',
@@ -179,19 +184,37 @@
       'Manger|Luke 2:7|Baby Jesus’ first bed.|k',
       'Empty tomb|John 20:5|The linen clothes lay there, but Jesus was risen.|k'
     ] },
-    { id: 'every', name: 'Everyday India', kn: 'ದಿನನಿತ್ಯ ಜೀವನ', lang: 'en', on: true, words: [
-      'Riding an auto||k', 'Making dosa||k', 'Cricket match||k', 'Traffic jam||k', 'Wedding dance||k', 'Monsoon rain||k', 'Filter coffee', 'Power cut||k',
-      'Bus conductor||k', 'Taking a selfie||k', 'Kite flying||k', 'Chai stall', 'Online class||k', 'Video call with grandma||k', 'Tiffin box||k', 'Ironing clothes',
-      'Watering plants||k', 'Getting a haircut||k', 'Brushing teeth||k', 'Climbing a coconut tree||k', 'Elephant||k', 'Peacock||k', 'Eating a mango||k', 'Opening an umbrella||k',
-      'Riding a scooter', 'Bargaining at the market', 'Missing the bus||k', 'Birthday cake||k', 'Mosquito bite||k', 'Morning walk||k', 'Cooking biryani', 'Rangoli||k',
-      'Flying a drone', 'School bell||k', 'Doing homework||k', 'Washing the car', 'Train journey||k', 'Waiting in a queue||k', 'Playing carrom||k', 'Rain-soaked bike ride'
+    { id: 'church', name: 'Church life', kn: 'ಸಭೆಯ ಜೀವನ', lang: 'en', mode: 'bible', on: true, words: [
+      'Choir practice||k', 'Sunday school class||k', 'Church potluck||k', 'Baptism|Matthew 3:16|Jesus was baptised in the Jordan.|k', 'Passing the offering plate||k',
+      'Youth camp||k', 'Vacation Bible School||k', 'Taking sermon notes', 'Church bus||k', 'Bible study group', 'Communion|1 Corinthians 11:24|“This do in remembrance of me.”',
+      'Christmas carol singing||k', 'Easter sunrise service', 'Church wedding', 'Pastor preaching||k', 'Worship band||k', 'Raising hands in worship||k',
+      'Prayer meeting', 'Church picnic||k', 'Ringing the church bell||k', 'Christmas play||k', 'Reading the Bible||k', 'Saying grace before a meal||k',
+      'Kneeling to pray||k', 'Candlelight carol service||k', 'Mission trip', 'Bible sword drill||k', 'Memorising a verse||k', 'Ushering people to their seats',
+      'Wearing Sunday best||k', 'Church announcements', 'Clapping along to a hymn||k', 'Sharing a testimony', 'Fasting', 'Church cleaning day||k'
     ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
-    { id: 'kneveryday', name: 'ಕನ್ನಡ ಪದಗಳು', kn: 'ಕನ್ನಡ ಪದಗಳು', en: 'Kannada words', lang: 'kn', on: true, words: [
-      'ಮನೆ||k', 'ಮಳೆ||k', 'ಆನೆ||k', 'ನವಿಲು||k', 'ಇಡ್ಲಿ||k', 'ದೋಸೆ||k', 'ಕಾಫಿ', 'ಆಟೋ||k', 'ಬಸ್||k', 'ಮಾವಿನ ಹಣ್ಣು||k', 'ತೆಂಗಿನ ಮರ||k', 'ಛತ್ರಿ||k',
-      'ಸೈಕಲ್||k', 'ಕ್ರಿಕೆಟ್||k', 'ಗಾಳಿಪಟ||k', 'ಹಾವು||k', 'ಮೀನು||k', 'ಸೂರ್ಯ||k', 'ಚಂದ್ರ||k', 'ನಕ್ಷತ್ರ||k', 'ಹೂವು||k', 'ಶಾಲೆ||k', 'ಪುಸ್ತಕ||k', 'ಹಾಲು||k',
-      'ಮೊಸರು||k', 'ಬಾಳೆಹಣ್ಣು||k', 'ರೈಲು||k', 'ಮದುವೆ', 'ಹಬ್ಬ||k', 'ಕೋತಿ||k', 'ಹಸು||k', 'ಬೆಕ್ಕು||k', 'ನಾಯಿ||k', 'ಹುಲಿ||k', 'ದೋಣಿ||k', 'ವಿಮಾನ||k'
+    { id: 'feast', name: 'Christmas & Easter', kn: 'ಕ್ರಿಸ್ಮಸ್ ಮತ್ತು ಈಸ್ಟರ್', lang: 'en', mode: 'bible', on: true, words: [
+      'Angel Gabriel|Luke 1:26|God sent Gabriel to Mary in Nazareth.|k',
+      'Shepherds in the field|Luke 2:8|They kept watch over their flock by night.|k',
+      'No room at the inn|Luke 2:7|So the baby was laid in a manger.|k',
+      'Swaddling clothes|Luke 2:12|The sign the angel gave the shepherds.|k',
+      'A multitude of angels|Luke 2:14|“Glory to God in the highest.”|k',
+      'Journey to Bethlehem|Luke 2:4|Joseph went up from Nazareth with Mary.',
+      'Flight into Egypt|Matthew 2:14|Joseph took the child and his mother by night.',
+      'Simeon holds baby Jesus|Luke 2:28|He had waited all his life to see him.',
+      'Anna the prophetess|Luke 2:38|She gave thanks and spoke of him to everyone.',
+      'Waving palm branches|John 12:13|The crowd cried “Hosanna”.|k',
+      'Jesus on a donkey|Matthew 21:7|The disciples set him on the colt.|k',
+      'Garden of Gethsemane|Matthew 26:36|Jesus went there to pray.',
+      'The rooster crows|Matthew 26:75|Peter remembered what Jesus had said.',
+      'Thirty pieces of silver|Matthew 26:15|What Judas was paid.',
+      'Rolling the stone away|Matthew 28:2|An angel rolled back the stone.|k',
+      'He is risen|Matthew 28:6|The angel’s words at the tomb.|k',
+      'Breakfast on the beach|John 21:12|“Come and dine,” said Jesus.|k',
+      'The Ascension|Acts 1:9|A cloud received him out of their sight.',
+      'Easter morning|Mark 16:2|The women came very early, at sunrise.|k',
+      'Wise men bow down|Matthew 2:11|They fell down and worshipped him.|k'
     ] },
-    { id: 'knbible', name: 'ಬೈಬಲ್ ಕನ್ನಡ', kn: 'ಬೈಬಲ್ ಕನ್ನಡ', en: 'Bible in Kannada', lang: 'kn', on: true, words: [
+    { id: 'knbible', name: 'ಬೈಬಲ್ ಕನ್ನಡ', kn: 'ಬೈಬಲ್ ಕನ್ನಡ', en: 'Bible in Kannada', lang: 'kn', mode: 'bible', on: true, words: [
       'ನೋಹನ ನಾವೆ|Genesis 7:9|The animals went in two by two.|k',
       'ದಾವೀದ ಮತ್ತು ಗೊಲ್ಯಾತ|1 Samuel 17:49|One stone from a sling brought the giant down.|k',
       'ಯೋನ ಮತ್ತು ದೊಡ್ಡ ಮೀನು|Jonah 1:17|A great fish swallowed Jonah.|k',
@@ -221,61 +244,181 @@
       'ಮಳೆಬಿಲ್ಲು|Genesis 9:13|The sign of God’s promise to Noah.|k',
       'ಪಾರಿವಾಳ|Genesis 8:11|The dove brought an olive leaf to Noah.|k',
       'ದಾವೀದನ ಕಿನ್ನರಿ|1 Samuel 16:23|His playing calmed King Saul.|k',
-      'ಯೆರಿಕೋ ಗೋಡೆಗಳು|Joshua 6:20|They fell after Israel shouted.|k'
+      'ಯೆರಿಕೋ ಗೋಡೆಗಳು|Joshua 6:20|They fell after Israel shouted.|k',
+      'ಗೋದಲಿಯಲ್ಲಿ ಮಗು|Luke 2:7|Jesus was laid in a manger.|k',
+      'ಕುರುಬರು|Luke 2:8|Shepherds heard the angels’ news first.|k',
+      'ಜ್ಞಾನಿಗಳು|Matthew 2:11|They brought gold, frankincense and myrrh.|k',
+      'ಶಿಲುಬೆ|John 19:17|Jesus carried his cross to Golgotha.',
+      'ಪ್ರಾರ್ಥನೆ|Matthew 6:9|“Our Father which art in heaven.”|k',
+      'ಸಭೆ||k', 'ಗಾಯಕವೃಂದ||k', 'ಭಾನುವಾರದ ಶಾಲೆ||k', 'ದೀಕ್ಷಾಸ್ನಾನ|Matthew 3:16|Jesus was baptised in the Jordan.', 'ಸತ್ಯವೇದ ಓದು||k'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'hymns', name: 'Hymns & worship songs', kn: 'ಸ್ತುತಿಗೀತೆಗಳು', lang: 'en', mode: 'bible', on: true, songs: true, words: [
+      'Amazing Grace||k', 'How Great Thou Art', 'Blessed Assurance', 'Great Is Thy Faithfulness', 'What a Friend We Have in Jesus', 'It Is Well with My Soul', 'Rock of Ages',
+      'Holy, Holy, Holy', 'Jesus Loves Me||k', 'This Little Light of Mine||k', 'Silent Night||k', 'Joy to the World||k', 'O Come, All Ye Faithful', 'Hark! The Herald Angels Sing',
+      'Away in a Manger||k', 'Deep and Wide||k', 'Father Abraham||k', 'Give Me Oil in My Lamp||k', 'Be Thou My Vision', 'All Hail the Power of Jesus’ Name', 'Crown Him with Many Crowns',
+      'Abide with Me', 'Nearer, My God, to Thee', 'Onward, Christian Soldiers', 'Trust and Obey', 'I Surrender All', 'Count Your Blessings||k', 'Standing on the Promises',
+      'O Little Town of Bethlehem||k', 'We Three Kings||k', 'The First Noel||k', 'Go Tell It on the Mountain||k', 'He’s Got the Whole World in His Hands||k',
+      'Read Your Bible, Pray Every Day||k', 'Zacchaeus Was a Wee Little Man||k', 'The Wise Man Built His House upon the Rock||k', 'Shine, Jesus, Shine', 'How Great Is Our God',
+      '10,000 Reasons (Bless the Lord)', 'Way Maker', 'What a Beautiful Name', 'Here I Am to Worship', 'Lord, I Lift Your Name on High', 'Shout to the Lord', 'In Christ Alone'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+
+    /* ---------------- Everyday side: no Bible or church content ---------------- */
+    { id: 'every', name: 'Everyday India', kn: 'ದಿನನಿತ್ಯ ಜೀವನ', lang: 'en', mode: 'everyday', on: true, words: [
+      'Riding an auto||k', 'Making dosa||k', 'Cricket match||k', 'Traffic jam||k', 'Wedding dance||k', 'Monsoon rain||k', 'Filter coffee', 'Power cut||k',
+      'Bus conductor||k', 'Taking a selfie||k', 'Kite flying||k', 'Chai stall', 'Online class||k', 'Video call with grandma||k', 'Tiffin box||k', 'Ironing clothes',
+      'Watering plants||k', 'Getting a haircut||k', 'Brushing teeth||k', 'Climbing a coconut tree||k', 'Elephant||k', 'Peacock||k', 'Eating a mango||k', 'Opening an umbrella||k',
+      'Riding a scooter', 'Bargaining at the market', 'Missing the bus||k', 'Birthday cake||k', 'Mosquito bite||k', 'Morning walk||k', 'Cooking biryani', 'Rangoli||k',
+      'Flying a drone', 'School bell||k', 'Doing homework||k', 'Washing the car', 'Train journey||k', 'Waiting in a queue||k', 'Playing carrom||k', 'Rain-soaked bike ride'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'films', name: 'Movies & cartoons', kn: 'ಸಿನಿಮಾ ಮತ್ತು ಕಾರ್ಟೂನ್', lang: 'en', mode: 'everyday', on: true, words: [
+      'Sholay', 'Lagaan', '3 Idiots||k', 'Baahubali||k', 'KGF', 'Kantara', 'RRR||k', 'Dangal||k', 'Taare Zameen Par||k', 'Chak De! India||k', 'Titanic', 'Frozen||k',
+      'Toy Story||k', 'The Lion King||k', 'Finding Nemo||k', 'Jurassic Park||k', 'Harry Potter||k', 'Spider-Man||k', 'Superman||k', 'Batman||k', 'Mickey Mouse||k',
+      'Tom and Jerry||k', 'Chhota Bheem||k', 'Doraemon||k', 'Motu Patlu||k', 'Shin-chan||k', 'SpongeBob||k', 'Mr. Bean||k', 'Minions||k', 'Kung Fu Panda||k', 'Shrek||k',
+      'The Jungle Book||k', 'Star Wars||k', 'The Avengers||k', 'Pinocchio||k', 'Cinderella||k'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'sports', name: 'Sports & games', kn: 'ಆಟೋಟ', lang: 'en', mode: 'everyday', on: true, words: [
+      'Hitting a six||k', 'Bowling a bouncer', 'Penalty kick||k', 'Kabaddi raid||k', 'Kho-kho||k', 'Badminton smash||k', 'Swimming race||k', 'Running a marathon', 'Skipping rope||k',
+      'Hide and seek||k', 'Musical chairs||k', 'Ludo||k', 'Snakes and ladders||k', 'Playing chess||k', 'Table tennis||k', 'Weightlifting||k', 'Archery||k', 'Wrestling', 'Boxing',
+      'Surfing||k', 'Skateboarding||k', 'Cycling race||k', 'Yoga||k', 'Hula hoop||k', 'Tug of war||k', 'Lagori||k', 'Gilli-danda||k', 'Spinning a top||k', 'Golf||k',
+      'Ice skating||k', 'Basketball dunk||k', 'Volleyball spike||k', 'High jump||k', 'Relay race||k', 'Goalkeeper diving||k', 'Bowling at an alley||k'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'nature', name: 'Animals & nature', kn: 'ಪ್ರಾಣಿ ಮತ್ತು ಪ್ರಕೃತಿ', lang: 'en', mode: 'everyday', on: true, words: [
+      'Tiger||k', 'Giraffe||k', 'Kangaroo||k', 'Penguin||k', 'Crocodile||k', 'Monkey||k', 'Zebra||k', 'Panda||k', 'Octopus||k', 'Owl||k', 'Parrot||k', 'Butterfly||k',
+      'Snail||k', 'Frog||k', 'Squirrel||k', 'Rhino||k', 'Hippo||k', 'Cheetah||k', 'Jellyfish||k', 'Bat||k', 'Spider web||k', 'Waterfall||k', 'Volcano||k', 'Desert||k',
+      'Snowman||k', 'Thunderstorm||k', 'Rainforest||k', 'Sunflower||k', 'Banyan tree||k', 'Mushroom||k', 'Earthquake', 'Tornado', 'Glacier', 'Cave||k', 'Island||k', 'Shooting star||k'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'jobs', name: 'Jobs & actions', kn: 'ಉದ್ಯೋಗಗಳು', lang: 'en', mode: 'everyday', on: true, words: [
+      'Dentist||k', 'Firefighter||k', 'Police officer||k', 'Chef||k', 'Astronaut||k', 'Magician||k', 'Photographer||k', 'Tailor||k', 'Barber||k', 'Farmer||k', 'Nurse||k',
+      'Plumber||k', 'Electrician', 'Delivery rider||k', 'Waiter||k', 'Painter||k', 'Mechanic||k', 'Lifeguard||k', 'Traffic police||k', 'Vegetable seller||k', 'News reader||k',
+      'Cricket umpire||k', 'Zookeeper||k', 'Scientist||k', 'Librarian||k', 'Carpenter||k', 'Pizza maker||k', 'Yoga teacher||k', 'DJ||k', 'Film director', 'Weather reporter||k',
+      'Security guard||k', 'Juggler||k', 'Bus driver||k', 'Vet||k'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'food', name: 'Food & snacks', kn: 'ತಿಂಡಿ ತಿನಿಸು', lang: 'en', mode: 'everyday', on: true, words: [
+      'Pani puri||k', 'Masala dosa||k', 'Vada pav||k', 'Bisi bele bath', 'Mysore pak||k', 'Jalebi||k', 'Gulab jamun||k', 'Samosa||k', 'Pav bhaji||k', 'Noodles||k',
+      'Popcorn||k', 'Ice cream cone||k', 'Chocolate cake||k', 'Pizza slice||k', 'Burger||k', 'Sandwich||k', 'Ragi mudde', 'Neer dosa', 'Chapati||k', 'Butter chicken',
+      'Paneer tikka', 'Lassi||k', 'Sugarcane juice||k', 'Coconut water||k', 'Banana chips||k', 'Kulfi||k', 'Momos||k', 'Instant noodles||k', 'Carrot halwa||k', 'Payasa||k',
+      'Akki rotti', 'Chakli||k', 'Cotton candy||k', 'Boiled corn on the cob||k', 'Masala chai'
+    ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) },
+    { id: 'kneveryday', name: 'ಕನ್ನಡ ಪದಗಳು', kn: 'ಕನ್ನಡ ಪದಗಳು', en: 'Kannada words', lang: 'kn', mode: 'everyday', on: true, words: [
+      'ಮನೆ||k', 'ಮಳೆ||k', 'ಆನೆ||k', 'ನವಿಲು||k', 'ಇಡ್ಲಿ||k', 'ದೋಸೆ||k', 'ಕಾಫಿ', 'ಆಟೋ||k', 'ಬಸ್||k', 'ಮಾವಿನ ಹಣ್ಣು||k', 'ತೆಂಗಿನ ಮರ||k', 'ಛತ್ರಿ||k',
+      'ಸೈಕಲ್||k', 'ಕ್ರಿಕೆಟ್||k', 'ಗಾಳಿಪಟ||k', 'ಹಾವು||k', 'ಮೀನು||k', 'ಸೂರ್ಯ||k', 'ಚಂದ್ರ||k', 'ನಕ್ಷತ್ರ||k', 'ಹೂವು||k', 'ಶಾಲೆ||k', 'ಪುಸ್ತಕ||k', 'ಹಾಲು||k',
+      'ಮೊಸರು||k', 'ಬಾಳೆಹಣ್ಣು||k', 'ರೈಲು||k', 'ಮದುವೆ', 'ಹಬ್ಬ||k', 'ಕೋತಿ||k', 'ಹಸು||k', 'ಬೆಕ್ಕು||k', 'ನಾಯಿ||k', 'ಹುಲಿ||k', 'ದೋಣಿ||k', 'ವಿಮಾನ||k',
+      'ಕಾರು||k', 'ಗಡಿಯಾರ||k', 'ಮೊಬೈಲ್||k', 'ಜಿಲೇಬಿ||k', 'ಚಪಾತಿ||k', 'ಹೊಳೆ||k', 'ಬೆಟ್ಟ||k', 'ಕಾಡು||k', 'ಕುದುರೆ||k', 'ಆಮೆ||k', 'ಚಿಟ್ಟೆ||k', 'ಕಡಲೆಕಾಯಿ||k', 'ಮಲ್ಲಿಗೆ||k'
     ] },
-    { id: 'hum', name: 'Songs to hum', kn: 'ಗುನುಗುವ ಹಾಡುಗಳು', lang: 'en', on: true, songs: true, words: [
-      'Amazing Grace||k', 'How Great Thou Art', 'Blessed Assurance', 'Great Is Thy Faithfulness', 'What a Friend We Have in Jesus', 'It Is Well with My Soul', 'Rock of Ages', 'Holy, Holy, Holy',
-      'Jesus Loves Me||k', 'This Little Light of Mine||k', 'Silent Night||k', 'Joy to the World||k', 'O Come, All Ye Faithful', 'Hark! The Herald Angels Sing', 'Happy Birthday||k', 'Jingle Bells||k',
-      'Twinkle Twinkle Little Star||k', 'Old MacDonald Had a Farm||k', 'Baa Baa Black Sheep||k', 'Jana Gana Mana||k', 'Away in a Manger||k', 'Deep and Wide||k', 'Father Abraham||k', 'Give Me Oil in My Lamp||k'
+    { id: 'tunes', name: 'Songs to hum', kn: 'ಗುನುಗುವ ಹಾಡುಗಳು', lang: 'en', mode: 'everyday', on: true, songs: true, words: [
+      'Happy Birthday||k', 'Jingle Bells||k', 'Twinkle Twinkle Little Star||k', 'Old MacDonald Had a Farm||k', 'Baa Baa Black Sheep||k', 'Jana Gana Mana||k', 'Vande Mataram||k',
+      'Saare Jahan Se Achha||k', 'Johny Johny Yes Papa||k', 'Row, Row, Row Your Boat||k', 'London Bridge Is Falling Down||k', 'Humpty Dumpty||k', 'Head, Shoulders, Knees and Toes||k',
+      'If You’re Happy and You Know It||k', 'The Wheels on the Bus||k', 'Mary Had a Little Lamb||k', 'Itsy Bitsy Spider||k', 'Hickory Dickory Dock||k', 'Jai Ho||k',
+      'Chaiyya Chaiyya', 'Naatu Naatu||k', 'Why This Kolaveri Di||k', 'Hakuna Matata||k', 'Let It Go||k', 'Lungi Dance', 'Tum Hi Ho', 'Kesariya', 'Belageddu',
+      'Bombe Helutaite||k', 'Yeh Dosti (Sholay)', 'We Will Rock You', 'Baby Shark||k', 'Bella Ciao', 'The Final Countdown'
     ].map(function (w) { return w.indexOf('|') < 0 ? w + '||' : w; }) }
   ];
 
-  // Forbidden Words: [word, banned words, reference]
+  /* ===================== prompts: [text, kid-friendly, side] ===================== */
+  var B = 'bible', E = 'everyday';
+
+  // Forbidden Words: [word, banned words, reference, kid, side]
   var FORBID = [
-    ['Noah', ['Ark', 'Flood', 'Animals', 'Rain'], 'Genesis 6', 1], ['Moses', ['Egypt', 'Red Sea', 'Commandments', 'Pharaoh'], 'Exodus 14', 1],
-    ['David', ['Goliath', 'Sling', 'King', 'Harp'], '1 Samuel 17', 1], ['Jonah', ['Whale', 'Fish', 'Nineveh', 'Swallowed'], 'Jonah 1', 1],
-    ['Zacchaeus', ['Tree', 'Short', 'Tax', 'Jesus'], 'Luke 19', 1], ['Daniel', ['Lions', 'Den', 'Pray', 'King'], 'Daniel 6', 1],
-    ['Christmas', ['Jesus', 'December', 'Star', 'Manger'], 'Luke 2', 1], ['Easter', ['Tomb', 'Risen', 'Cross', 'Sunday'], 'Matthew 28', 1],
-    ['Samson', ['Strong', 'Hair', 'Delilah', 'Lion'], 'Judges 16', 1], ['Good Samaritan', ['Road', 'Robbers', 'Helped', 'Neighbour'], 'Luke 10', 1],
-    ['Peter', ['Fisherman', 'Rock', 'Denied', 'Disciple'], 'Matthew 16', 1], ['Manna', ['Bread', 'Desert', 'Heaven', 'Israelites'], 'Exodus 16', 0],
-    ['Esther', ['Queen', 'King', 'Jews', 'Mordecai'], 'Esther 4', 0], ['Goliath', ['Giant', 'David', 'Stone', 'Philistine'], '1 Samuel 17', 1],
-    ['Garden of Eden', ['Adam', 'Eve', 'Snake', 'Apple'], 'Genesis 2', 1], ['Last Supper', ['Bread', 'Wine', 'Disciples', 'Judas'], 'Luke 22', 0],
-    ['Ten Commandments', ['Moses', 'Rules', 'Stone', 'Sinai'], 'Exodus 20', 1], ['Bethlehem', ['Born', 'Town', 'Jesus', 'Manger'], 'Luke 2', 1],
-    ['Cricket', ['Bat', 'Ball', 'Wicket', 'IPL'], '', 1], ['Dosa', ['Chutney', 'Sambar', 'Breakfast', 'Crispy'], '', 1],
-    ['Monsoon', ['Rain', 'Umbrella', 'Wet', 'Clouds'], '', 1], ['Auto rickshaw', ['Meter', 'Three', 'Driver', 'Ride'], '', 1],
-    ['Wedding', ['Bride', 'Groom', 'Ring', 'Marry'], '', 0], ['Mango', ['Fruit', 'Yellow', 'Summer', 'Sweet'], '', 1],
-    ['Choir', ['Sing', 'Church', 'Songs', 'Voices'], '', 1], ['Sunday school', ['Children', 'Teacher', 'Bible', 'Church'], '', 1],
-    ['Elephant', ['Trunk', 'Big', 'Grey', 'Tusks'], '', 1], ['Birthday', ['Cake', 'Candles', 'Party', 'Age'], '', 1],
-    ['Teacher', ['School', 'Class', 'Students', 'Lessons'], '', 1], ['Train', ['Track', 'Station', 'Engine', 'Ticket'], '', 1]
+    ['Noah', ['Ark', 'Flood', 'Animals', 'Rain'], 'Genesis 6', 1, B], ['Moses', ['Egypt', 'Red Sea', 'Commandments', 'Pharaoh'], 'Exodus 14', 1, B],
+    ['David', ['Goliath', 'Sling', 'King', 'Harp'], '1 Samuel 17', 1, B], ['Jonah', ['Whale', 'Fish', 'Nineveh', 'Swallowed'], 'Jonah 1', 1, B],
+    ['Zacchaeus', ['Tree', 'Short', 'Tax', 'Jesus'], 'Luke 19', 1, B], ['Daniel', ['Lions', 'Den', 'Pray', 'King'], 'Daniel 6', 1, B],
+    ['Christmas', ['Jesus', 'December', 'Star', 'Manger'], 'Luke 2', 1, B], ['Easter', ['Tomb', 'Risen', 'Cross', 'Sunday'], 'Matthew 28', 1, B],
+    ['Samson', ['Strong', 'Hair', 'Delilah', 'Lion'], 'Judges 16', 1, B], ['Good Samaritan', ['Road', 'Robbers', 'Helped', 'Neighbour'], 'Luke 10', 1, B],
+    ['Peter', ['Fisherman', 'Rock', 'Denied', 'Disciple'], 'Matthew 16', 1, B], ['Manna', ['Bread', 'Desert', 'Heaven', 'Israelites'], 'Exodus 16', 0, B],
+    ['Esther', ['Queen', 'King', 'Jews', 'Mordecai'], 'Esther 4', 0, B], ['Goliath', ['Giant', 'David', 'Stone', 'Philistine'], '1 Samuel 17', 1, B],
+    ['Garden of Eden', ['Adam', 'Eve', 'Snake', 'Apple'], 'Genesis 2', 1, B], ['Last Supper', ['Bread', 'Wine', 'Disciples', 'Judas'], 'Luke 22', 0, B],
+    ['Ten Commandments', ['Moses', 'Rules', 'Stone', 'Sinai'], 'Exodus 20', 1, B], ['Bethlehem', ['Born', 'Town', 'Jesus', 'Manger'], 'Luke 2', 1, B],
+    ['Choir', ['Sing', 'Church', 'Songs', 'Voices'], '', 1, B], ['Sunday school', ['Children', 'Teacher', 'Bible', 'Church'], '', 1, B],
+    ['Abraham', ['Isaac', 'Sarah', 'Father', 'Stars'], 'Genesis 15', 1, B], ['Joseph', ['Coat', 'Brothers', 'Egypt', 'Dreams'], 'Genesis 37', 1, B],
+    ['Jericho', ['Walls', 'Trumpets', 'Joshua', 'Fell'], 'Joshua 6', 1, B], ['Pentecost', ['Fire', 'Tongues', 'Spirit', 'Wind'], 'Acts 2', 0, B],
+    ['Baptism', ['Water', 'John', 'River', 'Dip'], 'Matthew 3', 1, B], ['Shepherd', ['Sheep', 'Staff', 'Flock', 'Psalm'], 'Psalm 23', 1, B],
+    ['Angel', ['Wings', 'Gabriel', 'Heaven', 'Message'], 'Luke 1', 1, B], ['Prayer', ['God', 'Hands', 'Amen', 'Talk'], 'Matthew 6', 1, B],
+    ['Bible', ['Book', 'Verses', 'Read', 'Scripture'], '', 1, B], ['Mary', ['Mother', 'Jesus', 'Angel', 'Joseph'], 'Luke 1', 1, B],
+    ['Lazarus', ['Dead', 'Tomb', 'Raised', 'Martha'], 'John 11', 1, B], ['Nativity', ['Manger', 'Baby', 'Shepherds', 'Star'], 'Luke 2', 1, B],
+    ['Prodigal son', ['Father', 'Pigs', 'Return', 'Brother'], 'Luke 15', 1, B], ['Wise men', ['Gold', 'Star', 'Gifts', 'East'], 'Matthew 2', 1, B],
+    ['Paul', ['Letters', 'Damascus', 'Saul', 'Apostle'], 'Acts 9', 0, B], ['Elijah', ['Fire', 'Ravens', 'Chariot', 'Prophet'], '1 Kings 18', 0, B],
+    ['Hymn', ['Sing', 'Song', 'Church', 'Old'], '', 1, B], ['Pastor', ['Church', 'Sermon', 'Preach', 'Leader'], '', 1, B],
+    ['Communion', ['Bread', 'Wine', 'Lord', 'Supper'], '1 Corinthians 11', 0, B], ['Tower of Babel', ['Languages', 'Tall', 'Build', 'Confused'], 'Genesis 11', 1, B],
+    ['Burning bush', ['Moses', 'Fire', 'Holy', 'Shoes'], 'Exodus 3', 1, B], ['Church camp', ['Tents', 'Youth', 'Bonfire', 'Songs'], '', 1, B],
+
+    ['Cricket', ['Bat', 'Ball', 'Wicket', 'IPL'], '', 1, E], ['Dosa', ['Chutney', 'Sambar', 'Breakfast', 'Crispy'], '', 1, E],
+    ['Monsoon', ['Rain', 'Umbrella', 'Wet', 'Clouds'], '', 1, E], ['Auto rickshaw', ['Meter', 'Three', 'Driver', 'Ride'], '', 1, E],
+    ['Wedding', ['Bride', 'Groom', 'Ring', 'Marry'], '', 0, E], ['Mango', ['Fruit', 'Yellow', 'Summer', 'Sweet'], '', 1, E],
+    ['Elephant', ['Trunk', 'Big', 'Grey', 'Tusks'], '', 1, E], ['Birthday', ['Cake', 'Candles', 'Party', 'Age'], '', 1, E],
+    ['Teacher', ['School', 'Class', 'Students', 'Lessons'], '', 1, E], ['Train', ['Track', 'Station', 'Engine', 'Ticket'], '', 1, E],
+    ['Pizza', ['Cheese', 'Italy', 'Slice', 'Delivery'], '', 1, E], ['Football', ['Goal', 'Kick', 'Ball', 'Messi'], '', 1, E],
+    ['Selfie', ['Phone', 'Camera', 'Photo', 'Picture'], '', 1, E], ['WhatsApp', ['Message', 'Phone', 'Group', 'Chat'], '', 0, E],
+    ['Idli', ['Steamed', 'Rice', 'Sambar', 'White'], '', 1, E], ['Bengaluru', ['Traffic', 'City', 'Karnataka', 'Bangalore'], '', 1, E],
+    ['Doctor', ['Hospital', 'Medicine', 'Sick', 'Nurse'], '', 1, E], ['Beach', ['Sand', 'Sea', 'Waves', 'Sun'], '', 1, E],
+    ['Chess', ['King', 'Queen', 'Board', 'Checkmate'], '', 1, E], ['Ice cream', ['Cold', 'Cone', 'Sweet', 'Flavour'], '', 1, E],
+    ['Pilot', ['Plane', 'Fly', 'Airport', 'Captain'], '', 1, E], ['Superhero', ['Cape', 'Powers', 'Save', 'Villain'], '', 1, E],
+    ['Dinosaur', ['Extinct', 'Big', 'Fossil', 'T-rex'], '', 1, E], ['Library', ['Books', 'Quiet', 'Borrow', 'Read'], '', 1, E],
+    ['Rocket', ['Space', 'Launch', 'ISRO', 'Moon'], '', 1, E], ['Zoo', ['Animals', 'Cage', 'Visit', 'Lion'], '', 1, E],
+    ['Kite', ['String', 'Fly', 'Sky', 'Wind'], '', 1, E], ['Chai', ['Tea', 'Milk', 'Hot', 'Cup'], '', 0, E],
+    ['Biryani', ['Rice', 'Chicken', 'Spicy', 'Hyderabad'], '', 0, E], ['Wi-Fi', ['Internet', 'Password', 'Signal', 'Router'], '', 0, E],
+    ['Exam', ['Test', 'School', 'Marks', 'Study'], '', 1, E], ['Traffic light', ['Red', 'Green', 'Stop', 'Signal'], '', 1, E],
+    ['Swimming', ['Pool', 'Water', 'Swim', 'Goggles'], '', 1, E], ['Camping', ['Tent', 'Fire', 'Outdoors', 'Sleeping bag'], '', 1, E],
+    ['Mobile phone', ['Call', 'Screen', 'Charge', 'Apps'], '', 1, E], ['Cinema hall', ['Movie', 'Popcorn', 'Screen', 'Tickets'], '', 1, E],
+    ['Rainy day', ['Umbrella', 'Wet', 'Puddle', 'Clouds'], '', 1, E], ['Grandmother', ['Grandma', 'Old', 'Family', 'Ajji'], '', 1, E]
   ];
 
+  // Hot Potato categories
   var CATS = [
-    ['Books of the Bible', 1], ['The twelve disciples', 1], ['Animals in Noah’s ark', 1], ['Things in a kitchen', 1], ['Places in Karnataka', 1], ['Indian sweets', 1],
-    ['Worship songs', 1], ['Bible kings', 0], ['Women of the Bible', 1], ['Miracles of Jesus', 1], ['Things at a wedding', 0], ['Cricket players', 1],
-    ['Fruits', 1], ['Breakfast foods', 1], ['Things that fly', 1], ['Colours', 1], ['Bible cities', 0], ['School subjects', 1], ['Things in a church', 1], ['Vegetables', 1],
-    ['Parables of Jesus', 0], ['Animals in the Bible', 1], ['Things you take on a trip', 1], ['Indian states', 1], ['Bollywood films', 0], ['Board games', 1]
+    ['Books of the Bible', 1, B], ['The twelve disciples', 1, B], ['Animals in Noah’s ark', 1, B], ['Worship songs', 1, B], ['Bible kings', 0, B], ['Women of the Bible', 1, B],
+    ['Miracles of Jesus', 1, B], ['Bible cities', 0, B], ['Things in a church', 1, B], ['Parables of Jesus', 0, B], ['Animals in the Bible', 1, B], ['Prophets', 0, B],
+    ['Things in the Christmas story', 1, B], ['Things in the Easter story', 1, B], ['People who met Jesus', 1, B], ['People in Genesis', 0, B], ['Sons of Jacob', 0, B],
+    ['Hymns', 1, B], ['Bible heroes', 1, B], ['Bible baddies', 1, B], ['Jobs in the Bible', 1, B], ['Foods in the Bible', 1, B], ['Things at church camp', 1, B],
+    ['Books of the New Testament', 0, B], ['Mountains and rivers in the Bible', 0, B], ['Names and titles of Jesus', 0, B], ['Things Paul wrote letters to', 0, B], ['Christmas carols', 1, B],
+
+    ['Things in a kitchen', 1, E], ['Places in Karnataka', 1, E], ['Indian sweets', 1, E], ['Things at a wedding', 0, E], ['Cricket players', 1, E], ['Fruits', 1, E],
+    ['Breakfast foods', 1, E], ['Things that fly', 1, E], ['Colours', 1, E], ['School subjects', 1, E], ['Vegetables', 1, E], ['Things you take on a trip', 1, E],
+    ['Indian states', 1, E], ['Hindi films', 0, E], ['Board games', 1, E], ['Kannada films', 0, E], ['Cartoon characters', 1, E], ['Car brands', 1, E],
+    ['Animals in a zoo', 1, E], ['Sports', 1, E], ['Things in a classroom', 1, E], ['Musical instruments', 1, E], ['Ice cream flavours', 1, E], ['Superheroes', 1, E],
+    ['Things that are round', 1, E], ['Things in the sky', 1, E], ['Apps on a phone', 0, E], ['Things at the beach', 1, E], ['Countries', 1, E], ['Rivers of India', 0, E],
+    ['Things that are yellow', 1, E], ['Street foods', 1, E], ['Things in a bathroom', 1, E], ['Clothes', 1, E], ['Jobs', 1, E]
   ];
 
   var LIKELY = [
-    ['…arrive late to church', 1], ['…eat the last samosa', 1], ['…start a dance-off at a wedding', 1], ['…forget their Bible at home', 1], ['…cry at a movie', 1],
-    ['…fall asleep during the sermon', 0], ['…become a pastor', 0], ['…win a Bible quiz', 1], ['…get lost on a trip', 1], ['…talk their way out of trouble', 1],
-    ['…sing the loudest in church', 1], ['…bring snacks for everyone', 1], ['…forget a birthday', 1], ['…laugh at their own joke', 1], ['…volunteer first', 1],
-    ['…take 100 selfies on a trip', 1], ['…finish a Bible reading plan', 1], ['…become famous', 1], ['…cook the best biryani', 0], ['…reply last on WhatsApp', 0],
-    ['…have a pet dinosaur', 1], ['…win a spelling bee', 1], ['…make everyone laugh', 1], ['…lose their slippers', 1]
+    ['…arrive late to church', 1, B], ['…forget their Bible at home', 1, B], ['…fall asleep during the sermon', 0, B], ['…become a pastor', 0, B], ['…win a Bible quiz', 1, B],
+    ['…sing the loudest in church', 1, B], ['…finish a Bible reading plan', 1, B], ['…lead worship one day', 1, B], ['…cry during a worship song', 1, B],
+    ['…volunteer to pray first', 1, B], ['…bring their whole street to church', 1, B], ['…know every hymn by heart', 1, B], ['…go on a mission trip', 0, B],
+    ['…sit in the very front row at church', 1, B], ['…chat through the church announcements', 1, B], ['…organise the church picnic', 1, B],
+    ['…eat the most at the church potluck', 1, B], ['…memorise the most Bible verses', 1, B], ['…forget the words halfway through a hymn', 1, B],
+    ['…pray the longest prayer', 1, B], ['…play guitar for the youth group', 1, B], ['…teach Sunday school one day', 1, B], ['…sneak snacks into church', 1, B],
+    ['…win the Bible sword drill', 1, B], ['…clap on the wrong beat in worship', 1, B], ['…ask the most questions in Bible study', 1, B], ['…star in the Christmas play', 1, B],
+
+    ['…eat the last samosa', 1, E], ['…start a dance-off at a wedding', 1, E], ['…cry at a movie', 1, E], ['…get lost on a trip', 1, E], ['…talk their way out of trouble', 1, E],
+    ['…bring snacks for everyone', 1, E], ['…forget a birthday', 1, E], ['…laugh at their own joke', 1, E], ['…take 100 selfies on a trip', 1, E], ['…become famous', 1, E],
+    ['…cook the best biryani', 0, E], ['…reply last on WhatsApp', 0, E], ['…have a pet dinosaur', 1, E], ['…win a spelling bee', 1, E], ['…make everyone laugh', 1, E],
+    ['…lose their slippers', 1, E], ['…become a YouTuber', 1, E], ['…win a TV game show', 1, E], ['…travel to space', 1, E], ['…sleep through their alarm', 1, E],
+    ['…burn the toast', 1, E], ['…become a cricket star', 1, E], ['…adopt ten cats', 1, E], ['…forget their phone at home', 1, E], ['…win a bargain with a shopkeeper', 1, E],
+    ['…start their own business', 0, E], ['…be late to their own wedding', 0, E], ['…eat dessert first', 1, E], ['…sing loudest in the shower', 1, E],
+    ['…survive in a jungle', 1, E], ['…become prime minister', 1, E], ['…watch a whole series in one night', 0, E], ['…be the first one up for a holiday', 1, E]
   ];
 
   var CHALLENGES = [
-    ['Sing the chorus of your favourite worship song', 1], ['Act out Moses parting the Red Sea', 1], ['Say Genesis to Ruth in 20 seconds', 0],
-    ['Give the person on your left a genuine compliment', 1], ['Do your best auto driver impression', 1], ['Name all twelve disciples', 0],
-    ['Hum a hymn until someone guesses it', 1], ['Walk like a camel across the room', 1], ['Say a Bible verse from memory', 1],
-    ['Tell a clean joke that makes someone laugh', 1], ['Explain cricket in 30 seconds', 1], ['Speak only in Kannada for one minute', 1],
-    ['Act out Zacchaeus climbing the tree', 1], ['Name five kings of Israel', 0], ['Say the four Gospels while doing jumping jacks', 1],
-    ['Share your favourite church camp memory', 1], ['Freeze like a statue until your next turn', 1], ['Thank someone here for something specific', 1],
-    ['Make the sounds of Noah’s animals boarding the ark', 1], ['Say the alphabet backwards', 0], ['Draw a fish in the air with your elbow', 1],
-    ['Pretend to be David facing Goliath', 1], ['Pray for the person on your right', 1], ['Do a news report about Jonah', 1]
+    ['Sing the chorus of your favourite worship song', 1, B], ['Act out Moses parting the Red Sea', 1, B], ['Say the books from Genesis to Ruth in 20 seconds', 0, B],
+    ['Name all twelve disciples', 0, B], ['Hum a hymn until someone guesses it', 1, B], ['Say a Bible verse from memory', 1, B], ['Act out Zacchaeus climbing the tree', 1, B],
+    ['Name five kings of Israel', 0, B], ['Say the four Gospels while doing jumping jacks', 1, B], ['Share your favourite church camp memory', 1, B],
+    ['Make the sounds of Noah’s animals boarding the ark', 1, B], ['Draw the Christian fish sign in the air with your elbow', 1, B], ['Pretend to be David facing Goliath', 1, B],
+    ['Pray for the person on your right', 1, B], ['Do a news report about Jonah', 1, B], ['Act out Jesus calming the storm', 1, B], ['Name the fruit of the Spirit', 0, B],
+    ['Say the Lord’s Prayer', 1, B], ['Act out the walls of Jericho falling', 1, B], ['Retell the prodigal son in 30 seconds', 1, B], ['Name five women of the Bible', 0, B],
+    ['Lead everyone in one verse of a hymn', 1, B], ['Act out Jonah inside the fish', 1, B], ['Say a blessing over the person on your left', 1, B],
+    ['Say John 3:16 from memory', 1, B], ['Name three of Jesus’ miracles', 1, B], ['Act out a shepherd finding the lost sheep', 1, B], ['Preach a one-minute sermon on kindness', 1, B],
+
+    ['Give the person on your left a genuine compliment', 1, E], ['Do your best auto driver impression', 1, E], ['Walk like a camel across the room', 1, E],
+    ['Tell a clean joke that makes someone laugh', 1, E], ['Explain cricket in 30 seconds', 1, E], ['Speak only in Kannada for one minute', 1, E],
+    ['Freeze like a statue until your next turn', 1, E], ['Thank someone here for something specific', 1, E], ['Say the alphabet backwards', 0, E],
+    ['Do your best cartoon voice', 1, E], ['Sell a pen to the group in 30 seconds', 1, E], ['Dance with no music for 15 seconds', 1, E], ['Do ten squats', 1, E],
+    ['Balance a book on your head across the room', 1, E], ['Tell us about your day like a news anchor', 1, E], ['Name ten fruits in 15 seconds', 1, E],
+    ['Say “red lorry, yellow lorry” five times fast', 1, E], ['Make up a jingle about the person on your right', 1, E], ['Play a cricket shot in slow motion', 1, E],
+    ['Mime brushing an elephant’s teeth', 1, E], ['Commentate on the room like a cricket match', 1, E], ['Say five words that rhyme with “cat”', 1, E],
+    ['Act like a robot until your next turn', 1, E], ['Share your funniest school memory', 1, E], ['Say the months backwards', 0, E], ['Do a runway walk', 1, E],
+    ['Take everyone’s order like a waiter', 1, E], ['Sing Happy Birthday like an opera singer', 1, E], ['Guess the favourite colour of the person on your left', 1, E],
+    ['Pull your funniest face for 10 seconds', 1, E], ['Name five countries starting with the letter I', 0, E], ['Be a weather reporter for tomorrow', 1, E]
   ];
 
-  // Fill the Verse: [before, missing word, after, reference, kid-friendly]
+  // Fill the Verse (Bible side): [before, missing word, after, reference, kid-friendly]
   var VERSES = [
     ['For God so loved the', 'world', ', that he gave his only begotten Son.', 'John 3:16', 1],
     ['The LORD is my', 'shepherd', '; I shall not want.', 'Psalm 23:1', 1],
@@ -302,42 +445,126 @@
     ['But the', 'fruit', ' of the Spirit is love, joy, peace.', 'Galatians 5:22', 1],
     ['Children, obey your', 'parents', ' in the Lord: for this is right.', 'Ephesians 6:1', 1],
     ['O give thanks unto the LORD; for he is', 'good', '.', 'Psalm 136:1', 1],
+    ['Yea, though I walk through the valley of the shadow of death, I will fear no', 'evil', '.', 'Psalm 23:4', 0],
+    ['Come unto me, all ye that labour and are heavy laden, and I will give you', 'rest', '.', 'Matthew 11:28', 1],
+    ['I am the', 'bread', ' of life.', 'John 6:35', 1],
+    ['I am the', 'resurrection', ', and the life.', 'John 11:25', 0],
+    ['I am the', 'vine', ', ye are the branches.', 'John 15:5', 1],
+    ['Thy word have I hid in mine', 'heart', ', that I might not sin against thee.', 'Psalm 119:11', 1],
+    ['A', 'friend', ' loveth at all times.', 'Proverbs 17:17', 1],
+    ['If we confess our sins, he is', 'faithful', ' and just to forgive us our sins.', '1 John 1:9', 0],
+    ['For by', 'grace', ' are ye saved through faith.', 'Ephesians 2:8', 0],
+    ['Jesus Christ the same', 'yesterday', ', and to day, and for ever.', 'Hebrews 13:8', 1],
+    ['O', 'taste', ' and see that the LORD is good.', 'Psalm 34:8', 1],
+    ['For unto you is born this day in the city of David a', 'Saviour', ', which is Christ the Lord.', 'Luke 2:11', 1],
+    ['Go ye into all the world, and preach the', 'gospel', ' to every creature.', 'Mark 16:15', 1],
+    ['All scripture is given by', 'inspiration', ' of God.', '2 Timothy 3:16', 0],
+    ['And now abideth faith, hope, charity, these three; but the greatest of these is', 'charity', '.', '1 Corinthians 13:13', 0],
+    ['Create in me a', 'clean', ' heart, O God.', 'Psalm 51:10', 1],
+    ['I will lift up mine eyes unto the', 'hills', '.', 'Psalm 121:1', 1],
+    ['But as for me and my', 'house', ', we will serve the LORD.', 'Joshua 24:15', 1],
+    ['They are new every', 'morning', ': great is thy faithfulness.', 'Lamentations 3:23', 1],
+    ['To do justly, and to love mercy, and to walk', 'humbly', ' with thy God.', 'Micah 6:8', 0]
   ];
 
-  // Odd One Out: [four words, odd one, why, kid-friendly]
+  // Fill the Phrase (Everyday side): sayings and proverbs. [before, missing word, after, label, kid, lang]
+  var SAYINGS = [
+    ['An apple a day keeps the', 'doctor', ' away.', 'Saying', 1, 'en'], ['Actions speak louder than', 'words', '.', 'Saying', 1, 'en'],
+    ['The early bird catches the', 'worm', '.', 'Saying', 1, 'en'], ['Don’t judge a book by its', 'cover', '.', 'Saying', 1, 'en'],
+    ['Practice makes', 'perfect', '.', 'Saying', 1, 'en'], ['Better late than', 'never', '.', 'Saying', 1, 'en'],
+    ['When in Rome, do as the', 'Romans', ' do.', 'Saying', 0, 'en'], ['Every cloud has a silver', 'lining', '.', 'Saying', 1, 'en'],
+    ['Two heads are better than', 'one', '.', 'Saying', 1, 'en'], ['Rome wasn’t built in a', 'day', '.', 'Saying', 1, 'en'],
+    ['Honesty is the best', 'policy', '.', 'Saying', 1, 'en'], ['A picture is worth a thousand', 'words', '.', 'Saying', 1, 'en'],
+    ['Curiosity killed the', 'cat', '.', 'Saying', 1, 'en'], ['Don’t count your chickens before they', 'hatch', '.', 'Saying', 1, 'en'],
+    ['Too many cooks spoil the', 'broth', '.', 'Saying', 0, 'en'], ['Look before you', 'leap', '.', 'Saying', 1, 'en'],
+    ['Slow and steady wins the', 'race', '.', 'Saying', 1, 'en'], ['Where there’s a will, there’s a', 'way', '.', 'Saying', 1, 'en'],
+    ['The pen is mightier than the', 'sword', '.', 'Saying', 1, 'en'], ['Birds of a feather flock', 'together', '.', 'Saying', 1, 'en'],
+    ['Laughter is the best', 'medicine', '.', 'Saying', 1, 'en'], ['Time and', 'tide', ' wait for no man.', 'Saying', 0, 'en'],
+    ['A friend in need is a friend', 'indeed', '.', 'Saying', 1, 'en'], ['Don’t put all your eggs in one', 'basket', '.', 'Saying', 1, 'en'],
+    ['No pain, no', 'gain', '.', 'Saying', 1, 'en'], ['Easy come, easy', 'go', '.', 'Saying', 1, 'en'],
+    ['All that glitters is not', 'gold', '.', 'Saying', 1, 'en'], ['Absence makes the heart grow', 'fonder', '.', 'Saying', 0, 'en'],
+    ['Beauty is in the eye of the', 'beholder', '.', 'Saying', 0, 'en'], ['It takes two to', 'tango', '.', 'Saying', 0, 'en'],
+    ['The grass is always greener on the other', 'side', '.', 'Saying', 1, 'en'], ['Out of sight, out of', 'mind', '.', 'Saying', 1, 'en'],
+    ['Knowledge is', 'power', '.', 'Saying', 1, 'en'], ['Haste makes', 'waste', '.', 'Saying', 1, 'en'],
+    ['ಹಿತ್ತಲ ಗಿಡ', 'ಮದ್ದಲ್ಲ', '.', 'ಗಾದೆ', 1, 'kn'], ['ಮಾತು ಬೆಳ್ಳಿ, ಮೌನ', 'ಬಂಗಾರ', '.', 'ಗಾದೆ', 1, 'kn'],
+    ['ಅತಿ ಆಸೆ ಗತಿ', 'ಕೇಡು', '.', 'ಗಾದೆ', 1, 'kn'], ['ಕೈ ಕೆಸರಾದರೆ ಬಾಯಿ', 'ಮೊಸರು', '.', 'ಗಾದೆ', 1, 'kn'],
+    ['ಹನಿ ಹನಿ ಗೂಡಿದರೆ', 'ಹಳ್ಳ', ', ತೆನೆ ತೆನೆ ಗೂಡಿದರೆ ಬಳ್ಳ.', 'ಗಾದೆ', 1, 'kn'], ['ದೂರದ ಬೆಟ್ಟ', 'ನುಣ್ಣಗೆ', '.', 'ಗಾದೆ', 1, 'kn'],
+    ['ಆರೋಗ್ಯವೇ', 'ಭಾಗ್ಯ', '.', 'ಗಾದೆ', 1, 'kn'], ['ತಾಳಿದವನು', 'ಬಾಳಿಯಾನು', '.', 'ಗಾದೆ', 1, 'kn'],
+    ['ಆಳಾಗಬಲ್ಲವನು', 'ಅರಸಾಗಬಲ್ಲ', '.', 'ಗಾದೆ', 0, 'kn'], ['ಕುಣಿಯಲಾರದವಳು ನೆಲ', 'ಡೊಂಕು', ' ಅಂದಳು.', 'ಗಾದೆ', 1, 'kn'],
+    ['ಬೆಕ್ಕಿಗೆ ಆಟ, ಇಲಿಗೆ', 'ಪ್ರಾಣಸಂಕಟ', '.', 'ಗಾದೆ', 1, 'kn']
+  ];
+
+  // Odd One Out: [four words, odd one, why, kid-friendly, side]
   var ODDS = [
-    [['Peter', 'Andrew', 'Paul', 'John'], 'Paul', 'Paul wasn’t one of the twelve disciples', 1],
-    [['Genesis', 'Exodus', 'Matthew', 'Leviticus'], 'Matthew', 'The rest are books of Moses', 0],
-    [['Matthew', 'Mark', 'Luke', 'Acts'], 'Acts', 'The rest are Gospels', 1],
-    [['Gold', 'Frankincense', 'Myrrh', 'Silver'], 'Silver', 'The wise men brought the other three', 1],
-    [['Shem', 'Ham', 'Japheth', 'Isaac'], 'Isaac', 'The rest are Noah’s sons', 0],
-    [['Mary', 'Martha', 'Lazarus', 'Nicodemus'], 'Nicodemus', 'The rest were siblings in Bethany', 0],
-    [['Love', 'Joy', 'Peace', 'Anger'], 'Anger', 'The rest are fruit of the Spirit', 1],
-    [['Abraham', 'Isaac', 'Jacob', 'Moses'], 'Moses', 'The rest are the patriarchs', 0],
-    [['Lion', 'Bear', 'Giant', 'Wolf'], 'Wolf', 'David faced a lion, a bear and a giant', 1],
-    [['Bethlehem', 'Nazareth', 'Jerusalem', 'Rome'], 'Rome', 'The rest are in the land of Israel', 1],
-    [['Loaves', 'Fish', 'Wine', 'Rice'], 'Rice', 'The rest appear in Jesus’ miracles', 1],
-    [['Mango', 'Jackfruit', 'Banana', 'Carrot'], 'Carrot', 'The rest are fruits', 1],
-    [['Idli', 'Dosa', 'Vada', 'Pizza'], 'Pizza', 'The rest are South Indian breakfasts', 1],
-    [['Mysuru', 'Mangaluru', 'Hubballi', 'Chennai'], 'Chennai', 'The rest are in Karnataka', 1],
-    [['Lion', 'Tiger', 'Leopard', 'Elephant'], 'Elephant', 'The rest are big cats', 1],
-    [['Red', 'Blue', 'Yellow', 'Square'], 'Square', 'The rest are colours', 1]
+    [['Peter', 'Andrew', 'Paul', 'John'], 'Paul', 'Paul wasn’t one of the twelve disciples', 1, B],
+    [['Genesis', 'Exodus', 'Matthew', 'Leviticus'], 'Matthew', 'The rest are books of Moses', 0, B],
+    [['Matthew', 'Mark', 'Luke', 'Acts'], 'Acts', 'The rest are Gospels', 1, B],
+    [['Gold', 'Frankincense', 'Myrrh', 'Silver'], 'Silver', 'The wise men brought the other three', 1, B],
+    [['Shem', 'Ham', 'Japheth', 'Isaac'], 'Isaac', 'The rest are Noah’s sons', 0, B],
+    [['Mary', 'Martha', 'Lazarus', 'Nicodemus'], 'Nicodemus', 'The rest were siblings in Bethany', 0, B],
+    [['Love', 'Joy', 'Peace', 'Anger'], 'Anger', 'The rest are fruit of the Spirit', 1, B],
+    [['Abraham', 'Isaac', 'Jacob', 'Moses'], 'Moses', 'The rest are the patriarchs', 0, B],
+    [['Lion', 'Bear', 'Giant', 'Wolf'], 'Wolf', 'David faced a lion, a bear and a giant', 1, B],
+    [['Bethlehem', 'Nazareth', 'Jerusalem', 'Rome'], 'Rome', 'The rest are in the land of Israel', 1, B],
+    [['Loaves', 'Fish', 'Wine', 'Rice'], 'Rice', 'The rest appear in Jesus’ miracles', 1, B],
+    [['Joseph', 'Reuben', 'Judah', 'Samuel'], 'Samuel', 'The rest are sons of Jacob', 0, B],
+    [['Psalms', 'Proverbs', 'Ecclesiastes', 'Romans'], 'Romans', 'The rest are Old Testament books of wisdom and song', 0, B],
+    [['Sinai', 'Carmel', 'Mount of Olives', 'Everest'], 'Everest', 'The rest are mountains in the Bible', 1, B],
+    [['Jordan', 'Nile', 'Euphrates', 'Thames'], 'Thames', 'The rest are rivers in the Bible', 1, B],
+    [['Matthew', 'Thomas', 'James', 'Timothy'], 'Timothy', 'The rest were among the twelve disciples', 0, B],
+    [['Shepherds', 'Wise men', 'Angels', 'Fishermen'], 'Fishermen', 'The rest are in the Christmas story', 1, B],
+    [['Saul', 'David', 'Solomon', 'Moses'], 'Moses', 'The rest were kings of Israel', 0, B],
+    [['Ark', 'Dove', 'Rainbow', 'Camel'], 'Camel', 'The rest are in Noah’s story', 1, B],
+    [['Faith', 'Hope', 'Charity', 'Fear'], 'Fear', 'The rest are in 1 Corinthians 13:13', 1, B],
+    [['Galatians', 'Ephesians', 'Philippians', 'Genesis'], 'Genesis', 'The rest are letters of Paul', 0, B],
+    [['Elijah', 'Elisha', 'Isaiah', 'Pilate'], 'Pilate', 'The rest are prophets', 0, B],
+    [['Harp', 'Trumpet', 'Timbrel', 'Guitar'], 'Guitar', 'The rest are instruments in the Bible', 1, B],
+    [['Manger', 'Star', 'Shepherds', 'Pumpkin'], 'Pumpkin', 'The rest are in the nativity story', 1, B],
+
+    [['Mango', 'Jackfruit', 'Banana', 'Carrot'], 'Carrot', 'The rest are fruits', 1, E],
+    [['Idli', 'Dosa', 'Vada', 'Pizza'], 'Pizza', 'The rest are South Indian breakfasts', 1, E],
+    [['Mysuru', 'Mangaluru', 'Hubballi', 'Chennai'], 'Chennai', 'The rest are in Karnataka', 1, E],
+    [['Lion', 'Tiger', 'Leopard', 'Elephant'], 'Elephant', 'The rest are big cats', 1, E],
+    [['Red', 'Blue', 'Yellow', 'Square'], 'Square', 'The rest are colours', 1, E],
+    [['Mercury', 'Venus', 'Mars', 'Moon'], 'Moon', 'The rest are planets', 1, E],
+    [['Kabaddi', 'Kho-kho', 'Cricket', 'Chess'], 'Chess', 'The rest are field sports', 1, E],
+    [['Guitar', 'Violin', 'Sitar', 'Flute'], 'Flute', 'The rest have strings', 1, E],
+    [['Delhi', 'Mumbai', 'Kolkata', 'Kathmandu'], 'Kathmandu', 'The rest are in India', 1, E],
+    [['Carrot', 'Potato', 'Onion', 'Apple'], 'Apple', 'The rest are vegetables', 1, E],
+    [['Dolphin', 'Whale', 'Seal', 'Shark'], 'Shark', 'The rest are mammals', 0, E],
+    [['Square', 'Triangle', 'Circle', 'Cube'], 'Cube', 'The rest are flat shapes', 1, E],
+    [['Monday', 'Friday', 'Sunday', 'March'], 'March', 'The rest are days of the week', 1, E],
+    [['Kaveri', 'Ganga', 'Krishna', 'Himalaya'], 'Himalaya', 'The rest are rivers', 1, E],
+    [['Rose', 'Lotus', 'Jasmine', 'Neem'], 'Neem', 'The rest are flowers', 1, E],
+    [['Car', 'Bus', 'Scooter', 'Boat'], 'Boat', 'The rest travel on roads', 1, E],
+    [['Eyes', 'Nose', 'Mouth', 'Knee'], 'Knee', 'The rest are on your face', 1, E],
+    [['Football', 'Basketball', 'Volleyball', 'Badminton'], 'Badminton', 'The rest are played with a ball', 1, E],
+    [['Tea', 'Coffee', 'Milk', 'Bread'], 'Bread', 'The rest are drinks', 1, E],
+    [['Penguin', 'Ostrich', 'Emu', 'Parrot'], 'Parrot', 'The rest can’t fly', 1, E],
+    [['Rupee', 'Dollar', 'Euro', 'Kilogram'], 'Kilogram', 'The rest are money', 1, E],
+    [['Jalebi', 'Laddu', 'Mysore pak', 'Samosa'], 'Samosa', 'The rest are sweets', 1, E],
+    [['Snow', 'Rain', 'Hail', 'Sand'], 'Sand', 'The rest fall from clouds', 1, E],
+    [['Doraemon', 'Chhota Bheem', 'Shin-chan', 'Sachin'], 'Sachin', 'The rest are cartoon characters', 1, E],
+    [['Pencil', 'Eraser', 'Ruler', 'Pillow'], 'Pillow', 'The rest go in a school bag', 1, E]
   ];
 
   function parse(p) {
     return p.words.map(function (s) {
       var a = s.split('|');
-      return { w: a[0], ref: a[1] || '', fact: a[2] || '', kid: a[3] === 'k' || a[1] === 'k' || a[2] === 'k', pack: p.id };
+      var kid = a[a.length - 1] === 'k';
+      if (kid) a.pop();
+      return { w: a[0], ref: a[1] || '', fact: a[2] || '', kid: kid, pack: p.id, mode: p.mode };
     });
   }
 
   window.HuddleData = {
-    PACKS: PACKS.map(function (p) { return { id: p.id, name: p.name, kn: p.kn, en: p.en || p.name, lang: p.lang, on: p.on, songs: !!p.songs, items: parse(p) }; }),
-    FORBID: FORBID.map(function (f) { return { w: f[0], ban: f[1], ref: f[2], kid: !!f[3] }; }),
-    CATS: CATS.map(function (c) { return { w: c[0], kid: !!c[1] }; }),
-    LIKELY: LIKELY.map(function (c) { return { w: c[0], kid: !!c[1] }; }),
-    CHALLENGES: CHALLENGES.map(function (c) { return { w: c[0], kid: !!c[1] }; }),
-    VERSES: VERSES.map(function (v) { return { before: v[0], word: v[1], after: v[2], ref: v[3], kid: !!v[4] }; }),
-    ODDS: ODDS.map(function (o) { return { words: o[0], odd: o[1], why: o[2], kid: !!o[3] }; })
+    PACKS: PACKS.map(function (p) { return { id: p.id, name: p.name, kn: p.kn, en: p.en || p.name, lang: p.lang, mode: p.mode, on: p.on, songs: !!p.songs, items: parse(p) }; }),
+    FORBID: FORBID.map(function (f) { return { w: f[0], ban: f[1], ref: f[2], kid: !!f[3], mode: f[4] }; }),
+    CATS: CATS.map(function (c) { return { w: c[0], kid: !!c[1], mode: c[2] }; }),
+    LIKELY: LIKELY.map(function (c) { return { w: c[0], kid: !!c[1], mode: c[2] }; }),
+    CHALLENGES: CHALLENGES.map(function (c) { return { w: c[0], kid: !!c[1], mode: c[2] }; }),
+    VERSES: VERSES.map(function (v) { return { before: v[0], word: v[1], after: v[2], ref: v[3], kid: !!v[4], mode: B, lang: 'en' }; }),
+    SAYINGS: SAYINGS.map(function (v) { return { before: v[0], word: v[1], after: v[2], ref: v[3], kid: !!v[4], mode: E, lang: v[5] }; }),
+    ODDS: ODDS.map(function (o) { return { words: o[0], odd: o[1], why: o[2], kid: !!o[3], mode: o[4] }; })
   };
 })();

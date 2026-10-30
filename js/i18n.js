@@ -81,6 +81,8 @@
     scoreSub: 'One scoreboard for the whole night', resetSure: 'Tap again to clear all points',
     nightOn: 'Your night is on. Tap to carry on.', readyToStart: 'Ready when you are', standings: 'Standings so far', upNext: 'Up next',
     playNext: 'Play', skipGame: 'Skip this game', endNight: 'End the night', pickGames: 'Pick tonight’s games', moveUp: 'Move up',
+    appearance: 'Appearance', appearanceSub: 'Light or dark, for Illustrated & Playful', light: 'Light', dark: 'Dark', matchPhone: 'Match phone',
+    sideBible: 'Bible', sideEveryday: 'Everyday', sideLabel: 'Content', sideBibleOn: 'Bible content on', sideEverydayOn: 'Everyday content on: no Bible or church words', sideNote: 'Switch to Everyday on the main screen for the other packs', sideNoteB: 'Switch to Bible on the main screen for the other packs',
     surprise: 'Surprise order', startNight: 'Start the night', nightNote: 'Points from every game add up on one scoreboard.', finalResults: 'Final results'
   };
   var KN2 = {
@@ -118,6 +120,8 @@
     scoreSub: 'ಇಡೀ ರಾತ್ರಿಗೆ ಒಂದೇ ಅಂಕಪಟ್ಟಿ', resetSure: 'ಎಲ್ಲಾ ಅಂಕ ಅಳಿಸಲು ಮತ್ತೆ ಒತ್ತಿ',
     nightOn: 'ನಿಮ್ಮ ರಾತ್ರಿ ನಡೆಯುತ್ತಿದೆ. ಮುಂದುವರಿಸಲು ಒತ್ತಿ.', readyToStart: 'ನೀವು ಸಿದ್ಧವಾದಾಗ', standings: 'ಇಲ್ಲಿಯವರೆಗಿನ ಅಂಕ', upNext: 'ಮುಂದಿನದು',
     playNext: 'ಆಡಿ', skipGame: 'ಈ ಆಟ ಬಿಡಿ', endNight: 'ರಾತ್ರಿ ಮುಗಿಸಿ', pickGames: 'ಇಂದಿನ ಆಟಗಳನ್ನು ಆರಿಸಿ', moveUp: 'ಮೇಲೆ ಸರಿಸಿ',
+    appearance: 'ನೋಟದ ಬಣ್ಣ', appearanceSub: 'ಬೆಳಕು ಅಥವಾ ಕತ್ತಲು (ಚಿತ್ರಮಯ ನೋಟಕ್ಕೆ)', light: 'ಬೆಳಕು', dark: 'ಕತ್ತಲು', matchPhone: 'ಫೋನಿನಂತೆ',
+    sideBible: 'ಬೈಬಲ್', sideEveryday: 'ದಿನನಿತ್ಯ', sideLabel: 'ವಿಷಯ', sideBibleOn: 'ಬೈಬಲ್ ವಿಷಯ ಆನ್', sideEverydayOn: 'ದಿನನಿತ್ಯ ವಿಷಯ ಆನ್: ಬೈಬಲ್ ಅಥವಾ ಸಭೆಯ ಪದಗಳಿಲ್ಲ', sideNote: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ದಿನನಿತ್ಯ ಆರಿಸಿ', sideNoteB: 'ಇತರ ಪ್ಯಾಕ್‌ಗಳಿಗೆ ಮುಖ್ಯ ಪರದೆಯಲ್ಲಿ ಬೈಬಲ್ ಆರಿಸಿ',
     surprise: 'ಅಚ್ಚರಿಯ ಕ್ರಮ', startNight: 'ರಾತ್ರಿ ಆರಂಭಿಸಿ', nightNote: 'ಎಲ್ಲಾ ಆಟಗಳ ಅಂಕಗಳು ಒಂದೇ ಅಂಕಪಟ್ಟಿಗೆ ಸೇರುತ್ತವೆ.', finalResults: 'ಅಂತಿಮ ಫಲಿತಾಂಶ'
   };
   Object.keys(EN2).forEach(function (k) { EN[k] = EN2[k]; });
@@ -133,6 +137,7 @@
     likely: ['ಯಾರು ಹೆಚ್ಚು?', 'ಮೂರು ಎಣಿಸಿ ಎಲ್ಲರೂ ಬೆರಳು ತೋರಿಸಿ.'],
     spin: ['ಚಕ್ರ ತಿರುಗಿಸು', 'ಆಟಗಾರ ಮತ್ತು ಸವಾಲಿಗಾಗಿ ಚಕ್ರ ತಿರುಗಿಸಿ.'],
     verse: ['ವಚನ ಪೂರ್ಣಗೊಳಿಸು', 'ಬೈಬಲ್ ವಚನವನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.'],
+    verseE: ['ಗಾದೆ ಪೂರ್ಣಗೊಳಿಸು', 'ಪ್ರಸಿದ್ಧ ಗಾದೆಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ.'],
     odd: ['ಬೇರೆಯದು ಯಾವುದು?', 'ನಾಲ್ಕರಲ್ಲಿ ಹೊಂದದ್ದನ್ನು ಹುಡುಕಿ.']
   };
   window.HuddleI18n = { en: EN, kn: KN, gamesKn: GAMES_KN };
