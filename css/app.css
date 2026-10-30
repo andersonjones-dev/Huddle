@@ -338,8 +338,6 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 .app[data-theme="arcade"] .logo span{color:#39e6ff;text-shadow:0 0 14px #39e6ff}
 .app[data-theme="arcade"] .word{background:linear-gradient(135deg,#2b2ce0,#ff2bd6)}
 .app[data-theme="arcade"] .ref{background:#39e6ff;color:#0d0b24}
-  --fd:"Bangers","Baloo Tamma 2",system-ui,sans-serif;--fdw:400;--fdls:.04em;--fb:"Comic Neue","Rubik","Noto Sans Kannada",system-ui,sans-serif;--r:10px;--bw:3px;--sh:5px 5px 0 #111;color-scheme:light;
-  --pat:radial-gradient(#11111122 1.2px,transparent 1.6px) 0 0/10px 10px}
 /* ---------- Look: Comic Splash ---------- */
 .app[data-theme="comic"]{--bg:#fff7c7;--card:#ffffff;--ink:#111111;--mute:#4b4b4b;--a1:#ff2e2e;--a2:#1f6bff;--a3:#e07000;--a4:#ffd400;
   --fd:"Bangers","Baloo Tamma 2",system-ui,sans-serif;--fdw:400;--fdls:.04em;--fb:"Comic Neue","Rubik","Noto Sans Kannada",system-ui,sans-serif;--r:10px;--bw:3px;--sh:5px 5px 0 #111;color-scheme:light;

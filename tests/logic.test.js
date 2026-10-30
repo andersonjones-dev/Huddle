@@ -153,4 +153,20 @@ test('Kannada sayings appear only when the app is in Kannada', function () {
 test('kid-friendly words are marked without leaking the k into facts', function () {
   assert.ok(H.D.PACKS.every(function (p) { return p.items.every(function (x) { return x.fact !== 'k' && x.ref !== 'k'; }); }));
 });
+test('the stylesheet has no stray lines that would break a look', function () {
+  var css = require('fs').readFileSync(path.join(__dirname, '..', 'css', 'app.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/url\("[^"]*"\)/g, 'url()');
+  var depth = 0, line = 1, problems = [], startOfLine = true;
+  for (var i = 0; i < css.length; i++) {
+    var ch = css[i];
+    if (ch === '\n') { line++; startOfLine = true; continue; }
+    if (depth === 0 && startOfLine && /\s/.test(ch)) continue;
+    if (depth === 0 && startOfLine && css.substr(i, 2) === '--') problems.push('setting outside a rule on line ' + line);
+    startOfLine = false;
+    if (ch === '{') depth++;
+    if (ch === '}') { depth--; if (depth < 0) { problems.push('extra } on line ' + line); depth = 0; } }
+  }
+  if (depth) problems.push('unclosed {');
+  assert.deepStrictEqual(problems, []);
+  ['playful', 'comic', 'arcade', 'graffiti'].forEach(function (th) { assert.ok(css.indexOf('.app[data-theme="' + th + '"]{') >= 0, th + ' settings block'); });
+});
 console.log('\n' + n + ' tests passed');
