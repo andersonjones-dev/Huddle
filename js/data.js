@@ -909,9 +909,11 @@
     ['🦁', 'Lions', B], ['🐘', 'Elephants', B], ['🦒', 'Giraffes', B], ['🐒', 'Monkeys', B], ['🐑', 'Sheep', B], ['🐄', 'Cows', B], ['🐎', 'Horses', B], ['🐪', 'Camels', B],
     ['🐻', 'Bears', B], ['🦓', 'Zebras', B], ['🐇', 'Rabbits', B], ['🐢', 'Tortoises', B], ['🦊', 'Foxes', B], ['🐓', 'Roosters', B], ['🐖', 'Pigs', B], ['🦉', 'Owls', B],
     ['🕊️', 'Doves', B], ['🌈', 'Rainbows', B], ['🐸', 'Frogs', B], ['🦌', 'Deer', B],
+    ['🐐', 'Goats', B], ['🦅', 'Eagles', B], ['🐝', 'Bees', B], ['🐺', 'Wolves', B], ['🐆', 'Leopards', B], ['🐜', 'Ants', B],
     ['🛺', 'Auto', E], ['🏏', 'Cricket bat', E], ['🥭', 'Mango', E], ['☕', 'Chai', E], ['🪁', 'Kite', E], ['🎂', 'Cake', E], ['🚂', 'Train', E], ['☂️', 'Umbrella', E],
     ['🍦', 'Ice cream', E], ['⚽', 'Football', E], ['🎈', 'Balloon', E], ['🌶️', 'Chilli', E], ['🍕', 'Pizza', E], ['📱', 'Phone', E], ['🚲', 'Bicycle', E], ['🎸', 'Guitar', E],
-    ['🥥', 'Coconut', E], ['🍌', 'Banana', E], ['🚀', 'Rocket', E], ['🎁', 'Present', E]
+    ['🥥', 'Coconut', E], ['🍌', 'Banana', E], ['🚀', 'Rocket', E], ['🎁', 'Present', E],
+    ['🛵', 'Scooter', E], ['🎧', 'Headphones', E], ['🧁', 'Cupcake', E], ['🏀', 'Basketball', E], ['🚗', 'Car', E], ['🍉', 'Watermelon', E]
   ];
 
   function parse(p) {

@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$;
-  var SIZES = [6, 8, 12];
+  var SIZES = [6, 8, 12, 18, 24];
   var FLIP = 1000;   // ms for one card to turn over (keep in step with .minner in app.css)
 
   H.game({
@@ -30,15 +30,39 @@
         var set = H.shuffle(H.list('MATCH')).slice(0, pairs), cards = H.shuffle(set.concat(set)).map(function (c, i) { return { c: c, i: i, up: false, done: false }; });
         var turn = 0, open = [], busy = false, found = {}, moves = 0, left = pairs;
         for (var k = 0; k < sides; k++) found[k] = 0;
-        var cols = pairs === 12 ? 6 : 4;   // 12, 16 or 24 cards: 3, 4 or 4 rows
+        // phone columns: 12 or 16 cards in 4 columns, 24 / 36 / 48 cards in 6 (4, 6 or 8 rows)
+        // tablet columns: 6, except 48 cards in 8 so the board fits a landscape iPad
+        var cols = pairs >= 12 ? 6 : 4, tcols = pairs === 24 ? 8 : 6;
         view.innerHTML = H.bar(H.gname(g), '') +
           '<div class="mturn" id="mturn"></div>' +
-          '<div class="mgrid' + (cols === 6 ? ' dense' : '') + '" style="--cols:' + cols + '" id="mgrid">' + cards.map(function (x) {
+          '<div class="mgrid' + (cols === 6 ? ' dense' : '') + '" style="--cols:' + cols + ';--tcols:' + tcols + '" id="mgrid">' + cards.map(function (x) {
             // a div, not a <button>: Safari flattens 3D turns inside buttons, so only the picture would swap
             return '<div class="mcard" role="button" tabindex="0" data-i="' + x.i + '" aria-label="' + esc(t('card')) + '"><span class="minner"><span class="mback">' + H.svg('match', 26) + '</span><span class="mface"><span class="pic">' + x.c.pic + '</span><small>' + esc(x.c.w) + '</small></span></span></div>';
           }).join('') + '</div>' +
           '<button class="link" type="button" id="fin">' + esc(t('finish')) + '</button>';
         var grid = $('#mgrid', view);
+        // if the board runs past the bottom of the screen, measure the space and pick the
+        // column count that gives the biggest square cards that still fit
+        function fit() {
+          if (!grid.isConnected) { removeEventListener('resize', fit); return; }
+          grid.style.gridTemplateColumns = ''; grid.style.maxWidth = '';
+          var over = view.scrollHeight - view.clientHeight;
+          if (over <= 1) return;
+          var n = cards.length, gap = parseFloat(getComputedStyle(grid).columnGap) || 0, W = grid.clientWidth,
+            Hh = grid.offsetHeight - over, best = 0, bc = 0;
+          // full rows first; a short last row only if full rows would make the cards too small to tap
+          for (var pass = 0; pass < 2 && best < 40; pass++) {
+            for (var c = 3; c <= n; c++) {
+              if (!pass && n % c) continue;
+              var r = Math.ceil(n / c), sz = Math.min((W - (c - 1) * gap) / c, (Hh - (r - 1) * gap) / r);
+              if (sz > best) { best = sz; bc = c; }
+            }
+          }
+          if (best < 40) return;   // too small to tap; let it scroll instead
+          grid.style.gridTemplateColumns = 'repeat(' + bc + ',' + Math.floor(best) + 'px)';
+          grid.style.maxWidth = (bc * Math.floor(best) + (bc - 1) * gap) + 'px';
+        }
+        addEventListener('resize', fit);
         function banner() {
           var el = $('#mturn', view);
           if (!sides) { el.innerHTML = '<b>' + esc(t('moves')) + ': ' + moves + '</b><span>' + esc(t('pairsLeft')) + ': ' + left + '</span>'; return; }
@@ -85,7 +109,7 @@
             (H.mode() === 'bible' ? H.learnHTML([{ w: t('twoByTwo'), ref: 'Genesis 7:9', fact: t('twoByTwoFact') }]) : '') +
             H.endButtons('match');
         }
-        banner();
+        banner(); fit();
       }
       setup();
     }
