@@ -544,7 +544,7 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 /* one piece turns over: both faces ride on .minner (the pattern iPhone Safari handles best) */
 .minner{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform 1s cubic-bezier(.45,.05,.25,1)}
 .mcard.up .minner{transform:rotateY(180deg)}
-.mcard.up .minner{animation:mlift 1s cubic-bezier(.45,.05,.25,1)}
+.mcard.up{animation:mlift 1s cubic-bezier(.45,.05,.25,1)}
 .minner>span{position:absolute;inset:0;border-radius:calc(var(--r) - 4px);border:var(--bw) solid var(--line,var(--ink));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--sh)}
 .mback{background:var(--a2);color:var(--a2ink,#fff);transform:rotateY(0deg)}
 .mface{background:var(--card);color:var(--ink);transform:rotateY(180deg)}
@@ -553,11 +553,11 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 .mcard.done{animation:mgot .45s cubic-bezier(.3,1.6,.5,1)}
 .mcard.done .mface{background:color-mix(in srgb,var(--a4) 35%,var(--card))}
 /* the card lifts a little as it turns, then settles */
-@keyframes mlift{0%{transform:rotateY(0) scale(1)}50%{transform:rotateY(90deg) scale(1.08)}100%{transform:rotateY(180deg) scale(1)}}
+@keyframes mlift{50%{transform:scale(1.07)}}
 @keyframes mgot{40%{transform:scale(1.1)}}
 .mgrid.dense{gap:6px}.mgrid.dense .mface .pic{font-size:clamp(22px,6.5vw,40px)}.mgrid.dense .mface small{display:none}.mgrid.dense .mback .i{width:18px;height:18px}
 @media (min-width:700px) and (min-height:600px){.mgrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.mface .pic{font-size:52px}.mface small{font-size:13px}.mgrid.dense .mface small{display:block}}
 @media (max-height:500px) and (orientation:landscape){.mgrid{grid-template-columns:repeat(8,minmax(0,1fr))}.mcard{aspect-ratio:1}}
 /* Reduce Motion: a quick fade instead of a turn */
-@media (prefers-reduced-motion:reduce){.minner,.mcard.up .minner{transition:none;animation:none;transform:none}.minner>span{transition:opacity .25s}.mface{transform:none;opacity:0}.mcard.up .mface{opacity:1}.mcard.up .mback{opacity:0}.mcard.done{animation:none}}
+@media (prefers-reduced-motion:reduce){.minner,.mcard.up .minner{transition:none;animation:none;transform:none}.minner>span{transition:opacity .25s}.mface{transform:none;opacity:0}.mcard.up .mface{opacity:1}.mcard.up .mback{opacity:0}.mcard.done,.mcard.up{animation:none}}
 .mgrid.dense .minner>span{box-shadow:2px 2px 0 var(--line,var(--ink))}
