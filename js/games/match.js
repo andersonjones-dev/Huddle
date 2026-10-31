@@ -33,7 +33,7 @@
         view.innerHTML = H.bar(H.gname(g), '') +
           '<div class="mturn" id="mturn"></div>' +
           '<div class="mgrid' + (cols === 6 ? ' dense' : '') + '" style="--cols:' + cols + '" id="mgrid">' + cards.map(function (x) {
-            return '<button class="mcard" type="button" data-i="' + x.i + '" aria-label="' + esc(t('card')) + '"><span class="mback">' + H.svg('match', 26) + '</span><span class="mface"><span class="pic">' + x.c.pic + '</span><small>' + esc(x.c.w) + '</small></span></button>';
+            return '<button class="mcard" type="button" data-i="' + x.i + '" aria-label="' + esc(t('card')) + '"><span class="minner"><span class="mback">' + H.svg('match', 26) + '</span><span class="mface"><span class="pic">' + x.c.pic + '</span><small>' + esc(x.c.w) + '</small></span></span></button>';
           }).join('') + '</div>' +
           '<button class="link" type="button" id="fin">' + esc(t('finish')) + '</button>';
         var grid = $('#mgrid', view);
@@ -51,19 +51,19 @@
           moves++; busy = true;
           var a = open[0], c = open[1]; open = [];
           if (a.c === c.c) {
-            H.later(function () {
+            H.later(function () {   // after the second card has turned over
               a.done = c.done = true; cell(a).classList.add('done'); cell(c).classList.add('done');
               left--; H.sfx('good'); H.haptic([20, 30, 40]);
               if (sides) { found[turn]++; H.addPoints(turn, 1, 'match'); }
               busy = false; banner();
-              if (!left) H.later(finish, 600);
-            }, 350);
+              if (!left) H.later(finish, 700);
+            }, 600);
           } else {
             H.later(function () {
               a.up = c.up = false; cell(a).classList.remove('up'); cell(c).classList.remove('up');
               H.sfx('pass'); if (sides) turn = (turn + 1) % sides;
               busy = false; banner();
-            }, 1000);
+            }, 1300);
           }
           banner();
         });
