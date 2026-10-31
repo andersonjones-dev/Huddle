@@ -539,11 +539,12 @@ textarea.inp{min-height:150px;padding:12px 14px;line-height:1.4;resize:vertical}
 .mturn span{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
 .mturn i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-left:6px}
 .mgrid{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:8px}
-.mcard{position:relative;aspect-ratio:1;border:0;padding:0;background:none;perspective:800px;min-height:52px}
+.mcard{position:relative;aspect-ratio:1;min-height:52px;cursor:pointer;-webkit-perspective:800px;perspective:800px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.mcard:focus-visible{outline:3px solid var(--a1);outline-offset:3px;border-radius:calc(var(--r) - 2px)}
 /* one piece turns over: both faces ride on .minner (the pattern iPhone Safari handles best) */
-.minner{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .55s cubic-bezier(.45,.05,.25,1)}
+.minner{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform 1s cubic-bezier(.45,.05,.25,1)}
 .mcard.up .minner{transform:rotateY(180deg)}
-.mcard.up .minner{animation:mlift .55s ease}
+.mcard.up .minner{animation:mlift 1s cubic-bezier(.45,.05,.25,1)}
 .minner>span{position:absolute;inset:0;border-radius:calc(var(--r) - 4px);border:var(--bw) solid var(--line,var(--ink));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--sh)}
 .mback{background:var(--a2);color:var(--a2ink,#fff);transform:rotateY(0deg)}
 .mface{background:var(--card);color:var(--ink);transform:rotateY(180deg)}

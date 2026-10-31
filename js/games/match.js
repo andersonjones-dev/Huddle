@@ -7,6 +7,7 @@
   'use strict';
   var H = window.Huddle, S = H.S, t = H.t, esc = H.esc, $ = H.$;
   var SIZES = [6, 8, 12];
+  var FLIP = 1000;   // ms for one card to turn over (keep in step with .minner in app.css)
 
   H.game({
     id: 'match', name: 'Ark Match', kind: 'party', tag: 'onePhone',
@@ -33,7 +34,8 @@
         view.innerHTML = H.bar(H.gname(g), '') +
           '<div class="mturn" id="mturn"></div>' +
           '<div class="mgrid' + (cols === 6 ? ' dense' : '') + '" style="--cols:' + cols + '" id="mgrid">' + cards.map(function (x) {
-            return '<button class="mcard" type="button" data-i="' + x.i + '" aria-label="' + esc(t('card')) + '"><span class="minner"><span class="mback">' + H.svg('match', 26) + '</span><span class="mface"><span class="pic">' + x.c.pic + '</span><small>' + esc(x.c.w) + '</small></span></span></button>';
+            // a div, not a <button>: Safari flattens 3D turns inside buttons, so only the picture would swap
+            return '<div class="mcard" role="button" tabindex="0" data-i="' + x.i + '" aria-label="' + esc(t('card')) + '"><span class="minner"><span class="mback">' + H.svg('match', 26) + '</span><span class="mface"><span class="pic">' + x.c.pic + '</span><small>' + esc(x.c.w) + '</small></span></span></div>';
           }).join('') + '</div>' +
           '<button class="link" type="button" id="fin">' + esc(t('finish')) + '</button>';
         var grid = $('#mgrid', view);
@@ -43,6 +45,7 @@
           el.style.setProperty('--tc', H.teamColor(turn));
           el.innerHTML = '<b>' + esc(H.fill(t('teamTurn'), { team: H.teamName(turn) })) + '</b><span>' + Object.keys(found).map(function (k) { return '<i style="background:' + H.teamColor(+k) + '"></i>' + found[k]; }).join(' ') + '</span>';
         }
+        grid.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.mcard')) { e.preventDefault(); e.target.closest('.mcard').click(); } });
         grid.addEventListener('click', function (e) {
           var b = e.target.closest('.mcard'); if (!b || busy) return;
           var x = cards[+b.dataset.i]; if (x.up || x.done) return;
@@ -57,13 +60,14 @@
               if (sides) { found[turn]++; H.addPoints(turn, 1, 'match'); }
               busy = false; banner();
               if (!left) H.later(finish, 700);
-            }, 600);
+            }, FLIP + 80);
           } else {
+            // both stay face up for a moment, turn back over (FLIP ms), then the turn passes
             H.later(function () {
               a.up = c.up = false; cell(a).classList.remove('up'); cell(c).classList.remove('up');
-              H.sfx('pass'); if (sides) turn = (turn + 1) % sides;
-              busy = false; banner();
-            }, 1300);
+              H.sfx('pass');
+              H.later(function () { if (sides) turn = (turn + 1) % sides; busy = false; banner(); }, FLIP);
+            }, FLIP + 900);
           }
           banner();
         });
