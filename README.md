@@ -34,7 +34,7 @@ a Bible / Everyday content switch on the main screen (no overlap between the two
 - `js/games/` – the games
 - `js/buzz.js` – phone buzzers: Huddle hosts a Firstbuzz room (needs internet)
 - `sw.js` – offline support. **Raise `VERSION` every time you publish a change**; phones then show the Update bar.
-- `update.js`, `about.js` – the same shared files as the other apps
+- Install strip, About and update bar come from the shared App-Kit (`/App-Kit/v1/kit.js`), the same file every app uses
 
 ## Tests
 

@@ -5,7 +5,7 @@
  * raise VERSION below (e.g. 1.0.0 -> 1.0.1). That tells phones a
  * new version exists; the app then offers an "Update" button.
  */
-var VERSION = '1.2.6';
+var VERSION = '1.2.7';
 var CACHE = 'huddle-' + VERSION;
 var LIB = 'huddle-lib';     // fonts and the QR code library; kept across versions
 
@@ -27,9 +27,7 @@ var APP_FILES = [
   './js/games/match.js',
   './js/games/seat.js',
   './js/app.js',
-  './about.js',
-  './update.js',
-  './install.js',
+  '/App-Kit/v1/kit.js',
   './manifest.webmanifest',
   './icons/icon.svg',
   './icons/icon-192.png',
@@ -67,6 +65,22 @@ self.addEventListener('fetch', function (event) {
   var req = event.request;
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
+
+  // Shared App-Kit (install strip, About, update bar) from andersonjones-dev.github.io/App-Kit:
+  // open the saved copy straight away and save the newest copy in the background for next time.
+  if (url.pathname.indexOf('/App-Kit/') === 0 && (url.origin === self.location.origin || url.hostname === 'andersonjones-dev.github.io')) {
+    event.respondWith(caches.open(CACHE).then(function (c) {
+      return c.match(req, { ignoreSearch: true }).then(function (hit) {
+        var net = fetch(req, { cache: 'no-cache' }).then(function (r) {
+          if (r && (r.ok || r.type === 'opaque')) c.put(req, r.clone());
+          return r;
+        });
+        if (hit) { event.waitUntil(net.catch(function () {})); return hit; }
+        return net;
+      });
+    }));
+    return;
+  }
 
   // Fonts and the QR library: saved the first time, then used offline.
   if (LIB_HOSTS.indexOf(url.hostname) >= 0) {
